@@ -181,12 +181,12 @@ isEmpty
 	^active isEmpty and: [ suspended isEmpty ]! !
 
 
-!CustomerBook methodsFor: 'initialization' stamp: 'L 9/23/2018 17:05:13'!
+!CustomerBook methodsFor: 'initialization' stamp: 'A.G. 9/24/2018 16:46:13'!
 initialize
 
 	super initialize.
-	active := OrderedCollection new.
-	suspended:= OrderedCollection new.! !
+	active := Set new.
+	suspended:= Set new.! !
 
 
 !CustomerBook methodsFor: 'customer management' stamp: 'L 9/23/2018 17:05:13'!
