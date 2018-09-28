@@ -329,6 +329,16 @@ invalidNumberType
 
 	self error: self class invalidNumberTypeErrorDescription! !
 
+!Numero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:25:17'!
+multiplyEntero:unMultiplicadorEntero
+
+^ self subclassResponsibility ! !
+
+!Numero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:28:02'!
+multiplyFraccion:unMultiplicadorFraccionario
+
+^ self subclassResponsibility ! !
+
 !Numero methodsFor: 'arithmetic operations' stamp: 'NR 9/23/2018 23:37:13'!
 negated
 	
@@ -373,17 +383,10 @@ Numero subclass: #Entero
 	poolDictionaries: ''
 	category: 'Numero-Exercise'!
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 17:44:28'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:36:01'!
 * aMultiplier 
 	
-	|newNumerador newDenominador|
-	
-	(aMultiplier isKindOf:Entero ) ifTrue:[
-		^self class with: value * (aMultiplier integerValue)].
-		
-	(aMultiplier isKindOf: Fraccion ) ifTrue:[newDenominador := (aMultiplier denominator).
-		newNumerador := (aMultiplier numerator) * (self ). 
-	^Fraccion with: newNumerador over: newDenominador]
+	aMultiplier multiplyEntero: self
 	! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 20:44:48'!
@@ -446,6 +449,19 @@ fibonacci
 greatestCommonDivisorWith: anEntero 
 	
 	^self class with: (value gcd: anEntero integerValue)! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:29:35'!
+multiplyEntero:unMultiplicadorEntero
+
+	^self class with: value * (unMultiplicadorEntero integerValue)! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:30:58'!
+multiplyFraccion:unMultiplicadorFraccionario
+
+	| newDenominador newNumerador |
+	newDenominador := (unMultiplicadorFraccionario denominator).
+	newNumerador := (unMultiplicadorFraccionario numerator) * (self ). 
+	^Fraccion with: newNumerador over: newDenominador! !
 
 
 !Entero methodsFor: 'comparing' stamp: 'HernanWilkinson 5/7/2016 21:01'!
@@ -520,12 +536,10 @@ Numero subclass: #Fraccion
 	poolDictionaries: ''
 	category: 'Numero-Exercise'!
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 17:45:48'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:35:38'!
 * aMultiplier 
 	
-	(aMultiplier isKindOf: Fraccion ) ifTrue: [^(numerator * aMultiplier numerator) / (denominator * aMultiplier denominator)].
-	
-	(aMultiplier isKindOf: Entero) ifTrue: [^ Fraccion with: (self numerator * (aMultiplier )) over: self denominator ]
+	aMultiplier multiplyFraccion: self
 	
 	
 	! !
@@ -579,6 +593,23 @@ addFraccion:unSumandoFraccionario
 	newNumerator := (numerator * unSumandoFraccionario denominator) + (denominator * unSumandoFraccionario numerator).
 	newDenominator := denominator * unSumandoFraccionario denominator.
 	^newNumerator / newDenominator ! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:39:01'!
+multiplyEntero:unMultiplicadorEntero
+
+	| newDenominator newNumerator |
+	newNumerator:= (self numerator) * (unMultiplicadorEntero).
+	newDenominator:= self denominator.
+
+	^ Fraccion with: newNumerator over: newDenominator! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:34:49'!
+multiplyFraccion:unMultiplicadorFraccionario
+
+	| newDenominador newNumerador |
+	newNumerador:= (numerator * unMultiplicadorFraccionario numerator).
+	newDenominador:= (denominator * unMultiplicadorFraccionario denominator).
+	^Fraccion with: newNumerador over: newDenominador! !
 
 
 !Fraccion methodsFor: 'comparing' stamp: 'HernanWilkinson 5/7/2016 20:42'!
