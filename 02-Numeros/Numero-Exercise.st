@@ -314,6 +314,16 @@ Object subclass: #Numero
 
 	self subclassResponsibility ! !
 
+!Numero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 20:55:23'!
+addEntero:unSumandoEntero
+
+^ self subclassResponsibility ! !
+
+!Numero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 20:59:49'!
+addFraccion:unSumandoFraccionario
+
+^ self subclassResponsibility ! !
+
 !Numero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 22:48'!
 invalidNumberType
 
@@ -376,15 +386,10 @@ Numero subclass: #Entero
 	^Fraccion with: newNumerador over: newDenominador]
 	! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/24/2018 21:15:28'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 20:44:48'!
 + anAdder 
-|numerador denominador|
-	(anAdder isKindOf:Entero ) ifTrue:[
-		^self class with: value + anAdder integerValue].
-		
-	(anAdder isKindOf: Fraccion ) ifTrue:[numerador := (anAdder denominator * self) + anAdder numerator. denominador := anAdder denominator. 
-	^Fraccion with: numerador over: denominador]
-		! !
+
+	^anAdder addEntero: self! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 17:04:50'!
 - aSubtrahend 
@@ -410,6 +415,18 @@ Numero subclass: #Entero
 // aDivisor 
 	
 	^self class with: value // aDivisor integerValue! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 20:55:02'!
+addEntero:unSumandoEntero
+
+		^self class with: value + unSumandoEntero integerValue! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:02:23'!
+addFraccion:unSumandoFraccionario
+
+	|numerador denominador|
+	numerador := (unSumandoFraccionario denominator * self) + unSumandoFraccionario numerator. denominador := unSumandoFraccionario denominator. 
+	^Fraccion with: numerador over: denominador! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'HAW 9/24/2018 08:47:50'!
 fibonacci
@@ -513,20 +530,10 @@ Numero subclass: #Fraccion
 	
 	! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 14:07:21'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:12:00'!
 + anAdder 
-	
-	| newNumerator newDenominator |
-	
-	(anAdder isKindOf:Entero ) ifTrue:[
-		newDenominator := self denominator.
-		newNumerator := self numerator + (anAdder * (self denominator))].
-	
-	(anAdder isKindOf:Fraccion ) ifTrue:[
-	newNumerator := (numerator * anAdder denominator) + (denominator * anAdder numerator).
-	newDenominator := denominator * anAdder denominator.
-	].
-	^newNumerator / newDenominator ! !
+
+	^anAdder addFraccion: self! !
 
 !Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 17:52:40'!
 - aSubtrahend 
@@ -553,6 +560,25 @@ Numero subclass: #Fraccion
 		newFraction := Fraccion with: (self numerator * aDivisor denominator) over: (self denominator * aDivisor numerator)].
 	
 	^newFraction ! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:10:38'!
+addEntero:unSumandoEntero
+	
+	| newNumerator newDenominator |
+	
+	newDenominator := self denominator.
+	newNumerator := self numerator + (unSumandoEntero * (self denominator)).
+	
+	^Fraccion with: newNumerator over: newDenominator! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:09:00'!
+addFraccion:unSumandoFraccionario
+	
+	| newNumerator newDenominator |
+	
+	newNumerator := (numerator * unSumandoFraccionario denominator) + (denominator * unSumandoFraccionario numerator).
+	newDenominator := denominator * unSumandoFraccionario denominator.
+	^newNumerator / newDenominator ! !
 
 
 !Fraccion methodsFor: 'comparing' stamp: 'HernanWilkinson 5/7/2016 20:42'!
