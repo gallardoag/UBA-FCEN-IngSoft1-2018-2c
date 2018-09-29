@@ -383,10 +383,10 @@ Numero subclass: #Entero
 	poolDictionaries: ''
 	category: 'Numero-Exercise'!
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:36:01'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 16:04:19'!
 * aMultiplier 
 	
-	aMultiplier multiplyEntero: self
+	^aMultiplier multiplyEntero: self
 	! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 20:44:48'!
@@ -450,10 +450,10 @@ greatestCommonDivisorWith: anEntero
 	
 	^self class with: (value gcd: anEntero integerValue)! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:29:35'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 15:43:52'!
 multiplyEntero:unMultiplicadorEntero
 
-	^self class with: value * (unMultiplicadorEntero integerValue)! !
+	^self class with: value * unMultiplicadorEntero integerValue! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:30:58'!
 multiplyFraccion:unMultiplicadorFraccionario
@@ -536,10 +536,10 @@ Numero subclass: #Fraccion
 	poolDictionaries: ''
 	category: 'Numero-Exercise'!
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 21:35:38'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 16:07:49'!
 * aMultiplier 
 	
-	aMultiplier multiplyFraccion: self
+	^aMultiplier multiplyFraccion: self
 	
 	
 	! !
