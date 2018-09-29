@@ -364,6 +364,16 @@ negated
 	
 	^self * (Entero with: -1)! !
 
+!Numero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 19:26:49'!
+restarAEntero: unMinuendoEntero
+
+	self subclassResponsibility ! !
+
+!Numero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 19:27:08'!
+restarAFraccion: unMinuendoFraccionario
+
+	self subclassResponsibility ! !
+
 
 !Numero methodsFor: 'testing' stamp: 'NR 9/23/2018 23:36:49'!
 isNegative
@@ -414,13 +424,10 @@ Numero subclass: #Entero
 
 	^anAdder addEntero: self! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 17:04:50'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 19:23:42'!
 - aSubtrahend 
 	
-	(aSubtrahend isKindOf: Entero ) ifTrue: [^ self class with: value - aSubtrahend integerValue].
-	(aSubtrahend isKindOf: Fraccion )ifTrue: [
-		
-		^ Fraccion with:(self * (aSubtrahend denominator)) - (aSubtrahend numerator) over: (aSubtrahend denominator)].! !
+	^ aSubtrahend restarAEntero: self! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 18:02:01'!
 / aDivisor 
@@ -443,15 +450,6 @@ addFraccion:unSumandoFraccionario
 	|numerador denominador|
 	numerador := (unSumandoFraccionario denominator * self) + unSumandoFraccionario numerator. denominador := unSumandoFraccionario denominator. 
 	^Fraccion with: numerador over: denominador! !
-
-!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 17:10:46'!
-divideFraccion: unDivisorFraccionario
-
-	|newNumerador newDenominador|
-	
-	newNumerador := unDivisorFraccionario denominator * self.
-	newDenominador := unDivisorFraccionario numerator.
-	^Fraccion with: newNumerador over: newDenominador! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 18:02:42'!
 dividirAEntero: unDividendoEntero
@@ -497,6 +495,19 @@ multiplyFraccion:unMultiplicadorFraccionario
 	| newDenominador newNumerador |
 	newDenominador := (unMultiplicadorFraccionario denominator).
 	newNumerador := (unMultiplicadorFraccionario numerator) * (self ). 
+	^Fraccion with: newNumerador over: newDenominador! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 19:46:51'!
+restarAEntero: unMinuendoEntero
+
+	^self class with: (unMinuendoEntero integerValue) - (self integerValue)! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 19:33:59'!
+restarAFraccion: unMinuendoFraccionario
+
+	| newDenominador newNumerador |
+	newNumerador := (unMinuendoFraccionario numerator) - (self * unMinuendoFraccionario denominator).
+	newDenominador := (unMinuendoFraccionario denominator).
 	^Fraccion with: newNumerador over: newDenominador! !
 
 
@@ -565,6 +576,22 @@ with: aValue
 	^self new initalizeWith: aValue! !
 
 
+!classDefinition: #Cero category: #'Numero-Exercise'!
+Entero subclass: #Cero
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Numero-Exercise'!
+
+
+!classDefinition: #Uno category: #'Numero-Exercise'!
+Entero subclass: #Uno
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Numero-Exercise'!
+
+
 !classDefinition: #Fraccion category: #'Numero-Exercise'!
 Numero subclass: #Fraccion
 	instanceVariableNames: 'numerator denominator'
@@ -585,19 +612,10 @@ Numero subclass: #Fraccion
 
 	^anAdder addFraccion: self! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/27/2018 17:52:40'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 19:41:02'!
 - aSubtrahend 
 	
-	| newNumerator newDenominator |
-	
-	(aSubtrahend isKindOf: Entero ) ifTrue: [newNumerator := self numerator  - ((self denominator * aSubtrahend )). newDenominator:= self denominator].
-	(aSubtrahend isKindOf: Fraccion )ifTrue: [
-	newNumerator := (numerator * aSubtrahend denominator) - (denominator * aSubtrahend numerator).
-	newDenominator := denominator * aSubtrahend denominator
-	].
-	
-	^newNumerator / newDenominator 
-! !
+	^ aSubtrahend restarAFraccion: self! !
 
 !Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 18:08:30'!
 / aDivisor 
@@ -657,6 +675,26 @@ multiplyFraccion:unMultiplicadorFraccionario
 	newNumerador:= (numerator * unMultiplicadorFraccionario numerator).
 	newDenominador:= (denominator * unMultiplicadorFraccionario denominator).
 	^Fraccion with: newNumerador over: newDenominador! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 19:44:51'!
+restarAEntero: unMinuendoEntero
+
+
+	| newDenominador newNumerador |
+	newNumerador := (unMinuendoEntero * self denominator) - (self numerator).
+	newDenominador := self denominator.
+	
+	^self class with: newNumerador over: newDenominador! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'A.G. 9/29/2018 19:45:20'!
+restarAFraccion: unMinuendoFraccionario
+
+
+	| newDenominador newNumerador |
+	newNumerador := (unMinuendoFraccionario numerator * self denominator) - (self numerator * unMinuendoFraccionario denominator).
+	newDenominador := unMinuendoFraccionario denominator * self denominator.
+	
+	^self class with: newNumerador over: newDenominador! !
 
 
 !Fraccion methodsFor: 'comparing' stamp: 'HernanWilkinson 5/7/2016 20:42'!
