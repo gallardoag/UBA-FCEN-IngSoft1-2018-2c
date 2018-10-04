@@ -135,58 +135,50 @@ Object subclass: #Queue
 	poolDictionaries: ''
 	category: 'Queue-Exercise'!
 
-!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:47:10'!
-dequeue
-
-	^self head dequeue! !
-
-!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 12:57:32'!
-enqueue:anObject
-
-	self tail enqueue: anObject! !
-
-!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:37:02'!
+!Queue methodsFor: 'operations - private' stamp: 'A.G. 10/4/2018 14:37:02'!
 head
 
 	^head! !
 
-!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 12:13:20'!
-head:aQueueElement
+!Queue methodsFor: 'operations - private' stamp: 'A.G. 10/4/2018 12:58:22'!
+tail
 
-	head _ aQueueElement! !
+	^tail! !
 
-!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:32:55'!
+
+!Queue methodsFor: 'operations - public' stamp: 'A.G. 10/4/2018 14:47:10'!
+dequeue
+
+	^self head dequeue! !
+
+!Queue methodsFor: 'operations - public' stamp: 'A.G. 10/4/2018 12:57:32'!
+enqueue:anObject
+
+	self tail enqueue: anObject! !
+
+!Queue methodsFor: 'operations - public' stamp: 'L 10/3/2018 14:59:35'!
+isEmpty
+
+	^ head next isEmpty .! !
+
+!Queue methodsFor: 'operations - public' stamp: 'L 10/3/2018 16:01:39'!
+next
+
+	^ head next content .! !
+
+!Queue methodsFor: 'operations - public' stamp: 'A.G. 10/4/2018 14:25:12'!
+size
+
+	^ head next deepSize ! !
+
+
+!Queue methodsFor: 'initialization' stamp: 'A.G. 10/4/2018 14:32:55'!
 initialize
 
 	head _ QueueHead new.
 	tail _ QueueTail new.
 	head next: tail.
 	tail prev: head.! !
-
-!Queue methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:59:35'!
-isEmpty
-
-	^ head next isEmpty .! !
-
-!Queue methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 16:01:39'!
-next
-
-	^ head next content .! !
-
-!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:25:12'!
-size
-
-	^ head next deepSize ! !
-
-!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 12:58:22'!
-tail
-
-	^tail! !
-
-!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 12:58:01'!
-tail:aQueueElement
-
-	tail _ aQueueElement! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -199,10 +191,6 @@ queueEmptyErrorDescription
 	^ 'Queue is empty'.! !
 
 
-!Queue class methodsFor: 'casing' stamp: 'L 10/3/2018 20:30:13'!
-signalQueueIsEmpty
-	^ self error: self class queueEmptyErrorDescription ! !
-
 
 !classDefinition: #QueueObject category: #'Queue-Exercise'!
 Object subclass: #QueueObject
@@ -210,6 +198,11 @@ Object subclass: #QueueObject
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Queue-Exercise'!
+
+!QueueObject methodsFor: 'common protocol' stamp: 'd 10/4/2018 15:28:35'!
+dequeue
+
+	^ self subclassResponsibility .! !
 
 
 !classDefinition: #QueueElement category: #'Queue-Exercise'!
@@ -219,53 +212,56 @@ QueueObject subclass: #QueueElement
 	poolDictionaries: ''
 	category: 'Queue-Exercise'!
 
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:41:15'!
-content
-
-	^content ! !
-
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:40:42'!
-content:anObject
-
-	content _ anObject 
-	! !
-
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:40:04'!
-deepSize
-
-	^ 1 + next deepSize ! !
-
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:45:35'!
+!QueueElement methodsFor: 'common protocol' stamp: 'A.G. 10/4/2018 14:45:35'!
 dequeue
 
 	(self prev) next: (self next).
 	(self next) prev: (self prev).
 	^(self content)! !
 
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:39:48'!
-isEmpty
 
-	^ false! !
+!QueueElement methodsFor: 'accessing' stamp: 'L 10/3/2018 14:41:15'!
+content
 
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:37:36'!
+	^content ! !
+
+!QueueElement methodsFor: 'accessing' stamp: 'A.G. 10/4/2018 14:37:36'!
 next
 
 	^next! !
 
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:30:43'!
-next: aQueueObject
-
-	next _ aQueueObject! !
-
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:37:41'!
+!QueueElement methodsFor: 'accessing' stamp: 'A.G. 10/4/2018 14:37:41'!
 prev
 
 	^prev! !
 
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:31:31'!
+
+!QueueElement methodsFor: 'queue operations' stamp: 'L 10/3/2018 14:39:48'!
+isEmpty
+
+	^ false! !
+
+!QueueElement methodsFor: 'queue operations' stamp: 'A.G. 10/4/2018 14:31:31'!
 prev:aQueueObject
 
 	prev _ aQueueObject! !
+
+
+!QueueElement methodsFor: 'operations private' stamp: 'L 10/3/2018 14:40:42'!
+content:anObject
+
+	content _ anObject 
+	! !
+
+!QueueElement methodsFor: 'operations private' stamp: 'L 10/3/2018 14:40:04'!
+deepSize
+
+	^ 1 + next deepSize ! !
+
+!QueueElement methodsFor: 'operations private' stamp: 'A.G. 10/4/2018 14:30:43'!
+next: aQueueObject
+
+	next _ aQueueObject! !
 
 
 !classDefinition: #QueueHead category: #'Queue-Exercise'!
@@ -275,17 +271,18 @@ QueueObject subclass: #QueueHead
 	poolDictionaries: ''
 	category: 'Queue-Exercise'!
 
-!QueueHead methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:45:43'!
+!QueueHead methodsFor: 'common protocol' stamp: 'A.G. 10/4/2018 14:45:43'!
 dequeue
 
 	^((self next) dequeue)! !
 
-!QueueHead methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:37:23'!
+
+!QueueHead methodsFor: 'operations private' stamp: 'A.G. 10/4/2018 14:37:23'!
 next
 
 	^next! !
 
-!QueueHead methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:31:10'!
+!QueueHead methodsFor: 'operations private' stamp: 'A.G. 10/4/2018 14:31:10'!
 next: aQueueObject
 
 	next _ aQueueObject! !
@@ -298,22 +295,35 @@ QueueObject subclass: #QueueTail
 	poolDictionaries: ''
 	category: 'Queue-Exercise'!
 
-!QueueTail methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 20:30:49'!
-content
-
-	^ self error: Queue queueEmptyErrorDescription ! !
-
-!QueueTail methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:39:38'!
-deepSize
-
-	^ 0! !
-
-!QueueTail methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:23:39'!
+!QueueTail methodsFor: 'common protocol' stamp: 'A.G. 10/4/2018 14:23:39'!
 dequeue
 
 	^self error: Queue queueEmptyErrorDescription ! !
 
-!QueueTail methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:41:01'!
+
+!QueueTail methodsFor: 'accessing' stamp: 'L 10/3/2018 20:30:49'!
+content
+
+	^ self error: Queue queueEmptyErrorDescription ! !
+
+!QueueTail methodsFor: 'accessing' stamp: 'A.G. 10/4/2018 14:37:28'!
+prev
+
+	^prev! !
+
+
+!QueueTail methodsFor: 'operations private' stamp: 'L 10/3/2018 14:39:38'!
+deepSize
+
+	^ 0! !
+
+!QueueTail methodsFor: 'operations private' stamp: 'A.G. 10/4/2018 14:31:50'!
+prev:aQueueObject
+
+	prev _ aQueueObject! !
+
+
+!QueueTail methodsFor: 'queue operations' stamp: 'A.G. 10/4/2018 14:41:01'!
 enqueue:anObject
 
 	|newElement|
@@ -325,17 +335,7 @@ enqueue:anObject
 	(self prev) next: newElement.
 	self prev: newElement.! !
 
-!QueueTail methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:39:28'!
+!QueueTail methodsFor: 'queue operations' stamp: 'L 10/3/2018 14:39:28'!
 isEmpty
 
 	^ true! !
-
-!QueueTail methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:37:28'!
-prev
-
-	^prev! !
-
-!QueueTail methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:31:50'!
-prev:aQueueObject
-
-	prev _ aQueueObject! !
