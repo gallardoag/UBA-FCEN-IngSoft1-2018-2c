@@ -135,46 +135,33 @@ Object subclass: #Queue
 	poolDictionaries: ''
 	category: 'Queue-Exercise'!
 
-!Queue methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 22:06:05'!
+!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:47:10'!
 dequeue
 
-	|oldHead|
-	(head next  isKindOf: QueueTail ) ifTrue: [^ self error: self class  queueEmptyErrorDescription .].
+	^self head dequeue! !
 
-	(head next isKindOf: QueueElement) ifTrue: [
-		
-		oldHead _ head next.
-		head next: oldHead next.
-		^ oldHead content
-		
-		].	
-	! !
-
-!Queue methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 21:09:29'!
+!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 12:57:32'!
 enqueue:anObject
 
-	|newElement|
-		
-	newElement _ QueueElement new.
-	newElement content: anObject .
+	self tail enqueue: anObject! !
 
-	(tail  isKindOf: QueueTail ) ifTrue: [head next:newElement. newElement next:QueueTail new. tail _ newElement].
-	(tail  isKindOf: QueueElement ) ifTrue: [
-		
-		tail next:newElement .
-		tail _ newElement .
-		tail next: QueueTail new. 
-		
-	
-		
-		]! !
+!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:37:02'!
+head
 
-!Queue methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 15:00:59'!
+	^head! !
+
+!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 12:13:20'!
+head:aQueueElement
+
+	head _ aQueueElement! !
+
+!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:32:55'!
 initialize
 
 	head _ QueueHead new.
 	tail _ QueueTail new.
-	head next:tail.! !
+	head next: tail.
+	tail prev: head.! !
 
 !Queue methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:59:35'!
 isEmpty
@@ -186,10 +173,20 @@ next
 
 	^ head next content .! !
 
-!Queue methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 16:02:12'!
+!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:25:12'!
 size
 
 	^ head next deepSize ! !
+
+!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 12:58:22'!
+tail
+
+	^tail! !
+
+!Queue methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 12:58:01'!
+tail:aQueueElement
+
+	tail _ aQueueElement! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -207,15 +204,20 @@ signalQueueIsEmpty
 	^ self error: self class queueEmptyErrorDescription ! !
 
 
-!classDefinition: #QueueElement category: #'Queue-Exercise'!
-Object subclass: #QueueElement
-	instanceVariableNames: 'content next'
+!classDefinition: #QueueObject category: #'Queue-Exercise'!
+Object subclass: #QueueObject
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Queue-Exercise'!
 
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 23:48:49'!
-addElementToTheQueue:anObject withHead:aHead withTail:aTail! !
+
+!classDefinition: #QueueElement category: #'Queue-Exercise'!
+QueueObject subclass: #QueueElement
+	instanceVariableNames: 'prev content next'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Queue-Exercise'!
 
 !QueueElement methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:41:15'!
 content
@@ -233,61 +235,68 @@ deepSize
 
 	^ 1 + next deepSize ! !
 
+!QueueElement methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:45:35'!
+dequeue
+
+	(self prev) next: (self next).
+	(self next) prev: (self prev).
+	^(self content)! !
+
 !QueueElement methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:39:48'!
 isEmpty
 
 	^ false! !
 
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:41:06'!
+!QueueElement methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:37:36'!
 next
 
 	^next! !
 
-!QueueElement methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:40:54'!
-next:anObject
+!QueueElement methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:30:43'!
+next: aQueueObject
 
-	next _ anObject ! !
+	next _ aQueueObject! !
+
+!QueueElement methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:37:41'!
+prev
+
+	^prev! !
+
+!QueueElement methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:31:31'!
+prev:aQueueObject
+
+	prev _ aQueueObject! !
 
 
 !classDefinition: #QueueHead category: #'Queue-Exercise'!
-Object subclass: #QueueHead
+QueueObject subclass: #QueueHead
 	instanceVariableNames: 'next'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Queue-Exercise'!
 
-!QueueHead methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:32:41'!
-isEmpty
+!QueueHead methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:45:43'!
+dequeue
 
-	^ true! !
+	^((self next) dequeue)! !
 
-!QueueHead methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 15:00:12'!
+!QueueHead methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:37:23'!
 next
 
-	^ next! !
+	^next! !
 
-!QueueHead methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:40:29'!
-next:anObject
+!QueueHead methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:31:10'!
+next: aQueueObject
 
-	next _ anObject ! !
+	next _ aQueueObject! !
 
 
 !classDefinition: #QueueTail category: #'Queue-Exercise'!
-Object subclass: #QueueTail
+QueueObject subclass: #QueueTail
 	instanceVariableNames: 'prev'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Queue-Exercise'!
-
-!QueueTail methodsFor: 'as yet unclassified' stamp: 'L 10/4/2018 00:01:37'!
-addElementToTheQueue:anObject withHead:aHead withTail:aTail
-
-	|newElement|
-	
-	newElement _ QueueElement new content: anObject .
-	newElement next:self.
-	aHead next: self.
-	! !
 
 !QueueTail methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 20:30:49'!
 content
@@ -299,12 +308,34 @@ deepSize
 
 	^ 0! !
 
+!QueueTail methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:23:39'!
+dequeue
+
+	^self error: Queue queueEmptyErrorDescription ! !
+
+!QueueTail methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:41:01'!
+enqueue:anObject
+
+	|newElement|
+		
+	newElement _ QueueElement new.
+	newElement content: anObject .
+	newElement next: self.
+	newElement prev: self prev.
+	(self prev) next: newElement.
+	self prev: newElement.! !
+
 !QueueTail methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 14:39:28'!
 isEmpty
 
 	^ true! !
 
-!QueueTail methodsFor: 'as yet unclassified' stamp: 'L 10/3/2018 15:29:49'!
-prev:anElement
+!QueueTail methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:37:28'!
+prev
 
-	prev _ anElement ! !
+	^prev! !
+
+!QueueTail methodsFor: 'as yet unclassified' stamp: 'A.G. 10/4/2018 14:31:50'!
+prev:aQueueObject
+
+	prev _ aQueueObject! !
