@@ -277,14 +277,15 @@ test19CanNotCreatePortfoliosWithRepeatedAccount
 		withExceptionDo: [ :invalidPortfolio |
 			self assert: Portfolio accountAlreadyManagedErrorMessage  = invalidPortfolio messageText ]! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'HAW 10/11/2018 16:52:44'!
+!PortfolioTest methodsFor: 'tests' stamp: 'HAW 10/13/2018 19:34:42'!
 test20CanNotCreatePortfoliosWithAccountsManagedByOtherManagedPortfolio 
 
-	| account1 account2 complexPortfolio |
+	| account1 account2 account3 complexPortfolio |
 	
 	account1 := ReceptiveAccount new.
 	account2 := ReceptiveAccount new.
-	complexPortfolio := Portfolio with: account1 with: account2.
+	account3 := ReceptiveAccount new.
+	complexPortfolio := Portfolio withAll: (Array with: account1 with: account2 with: account3).
 
 	self 
 		should: [ Portfolio with: complexPortfolio with: account1 ]
@@ -292,24 +293,7 @@ test20CanNotCreatePortfoliosWithAccountsManagedByOtherManagedPortfolio
 		withExceptionDo: [ :invalidPortfolio |
 			self assert: Portfolio accountAlreadyManagedErrorMessage = invalidPortfolio messageText ]! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'HAW 5/8/2018 16:11:42'!
-test20_01CanNotCreatePortfoliosWithAccountsManagedByOtherManagedPortfolioTwo
-
-    | account1 account2 account3 complexPortfolio1 complexPortfolio2 |
-    
-    account1 := ReceptiveAccount new.
-    account2 := ReceptiveAccount new.
-    account3 := ReceptiveAccount new.    
-    complexPortfolio1 := Portfolio with: account1 with: account2.
-    complexPortfolio2 := Portfolio with: account3 with: account1.
-
-    self 
-        should: [ Portfolio with: complexPortfolio1 with: complexPortfolio2 ]
-        raise: Error
-        withExceptionDo: [ :invalidPortfolio |
-            self assert: Portfolio accountAlreadyManagedErrorMessage = invalidPortfolio messageText ] ! !
-
-!PortfolioTest methodsFor: 'tests' stamp: 'HAW 5/8/2018 16:09:32'!
+!PortfolioTest methodsFor: 'tests' stamp: 'HAW 10/13/2018 19:35:39'!
 test21CanNotCreatePortfoliosWithAccountsManagedByOtherManagedPortfolioTwo
 
     | account1 account2 account3 complexPortfolio1 complexPortfolio2 |
@@ -317,12 +301,12 @@ test21CanNotCreatePortfoliosWithAccountsManagedByOtherManagedPortfolioTwo
     account1 := ReceptiveAccount new.
     account2 := ReceptiveAccount new.
     account3 := ReceptiveAccount new.    
-    complexPortfolio1 := Portfolio with: account1 with: account2.
-    complexPortfolio2 := Portfolio with: account3 with: account1.
+    complexPortfolio1 := Portfolio withAll: (Array with: account1 with: account2).
+    complexPortfolio2 := Portfolio withAll: (Array with: account3 with: account1).
+
 
     self 
         should: [ Portfolio with: complexPortfolio1 with: complexPortfolio2 ]
         raise: Error
         withExceptionDo: [ :invalidPortfolio |
             self assert: Portfolio accountAlreadyManagedErrorMessage = invalidPortfolio messageText ] ! !
-

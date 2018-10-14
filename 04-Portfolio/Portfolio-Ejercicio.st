@@ -158,27 +158,29 @@ balance
 	^ managedAccounts inject: 0 into: [ :result :current | result + (current balance)] ! !
 
 
-!Portfolio methodsFor: 'testing' stamp: 'HAW 10/11/2018 16:53:28'!
+!Portfolio methodsFor: 'testing' stamp: 'L 10/14/2018 19:43:59'!
 doesManage: anAccount
 
-	self shouldBeImplemented 
+	^  (managedAccounts includes: anAccount) or:  [managedAccounts anySatisfy: [:anManagedAccount | anManagedAccount doesManage: anAccount ]]
 ! !
 
-!Portfolio methodsFor: 'testing' stamp: 'A.G. 10/11/2018 21:56:35'!
+!Portfolio methodsFor: 'testing' stamp: 'L 10/14/2018 19:40:30'!
 hasRegistered: aTransaction
 
-	^ managedAccounts inject: False into: [:detected :current | detected or: [current hasRegistered: aTransaction]  ]! !
+	^ managedAccounts anySatisfy: [:anManagedAccount | anManagedAccount hasRegistered: aTransaction ]! !
 
 
-!Portfolio methodsFor: 'transactions' stamp: 'HernanWilkinson 7/13/2011 18:39'!
+!Portfolio methodsFor: 'transactions' stamp: 'L 10/14/2018 19:55:37'!
 transactions 
 
-	self shouldBeImplemented ! !
+	^ managedAccounts inject: OrderedCollection new into:[:result :current | result addAll: current transactions.result ] ! !
 
-!Portfolio methodsFor: 'transactions' stamp: 'HernanWilkinson 7/13/2011 18:40'!
+!Portfolio methodsFor: 'transactions' stamp: 'L 10/14/2018 20:18:01'!
 transactionsOf: anAccount 
 
-	self shouldBeImplemented ! !
+	^managedAccounts detect:[:aManagedAccount | (aManagedAccount doesManage: anAccount) or:[managedAccounts includes: anAccount ] ]  
+	ifFound:[:foundAccount | foundAccount transactions ]  
+	ifNone:[self error: self class accountNotManagedMessageDescription ] ! !
 
 
 !Portfolio methodsFor: 'initialization' stamp: 'A.G. 10/11/2018 21:46:43'!
