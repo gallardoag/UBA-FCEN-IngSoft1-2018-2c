@@ -132,6 +132,11 @@ hasRegistered: aTransaction
 
 	self subclassResponsibility ! !
 
+!SummarizingAccount methodsFor: 'testing' stamp: 'A.G. 10/18/2018 11:34:30'!
+managedAccounts
+
+	self subclassResponsibility ! !
+
 
 !SummarizingAccount methodsFor: 'transactions' stamp: 'HernanWilkinson 7/13/2011 18:35'!
 transactions
@@ -158,16 +163,21 @@ balance
 	^ managedAccounts inject: 0 into: [ :result :current | result + (current balance)] ! !
 
 
-!Portfolio methodsFor: 'testing' stamp: 'L 10/14/2018 19:43:59'!
+!Portfolio methodsFor: 'testing' stamp: 'A.G. 10/17/2018 17:47:11'!
 doesManage: anAccount
 
-	^  (managedAccounts includes: anAccount) or:  [managedAccounts anySatisfy: [:anManagedAccount | anManagedAccount doesManage: anAccount ]]
+	^  (managedAccounts includes: anAccount) or:  [managedAccounts anySatisfy: [:aManagedAccount | aManagedAccount doesManage: anAccount ]]
 ! !
 
-!Portfolio methodsFor: 'testing' stamp: 'L 10/14/2018 19:40:30'!
+!Portfolio methodsFor: 'testing' stamp: 'A.G. 10/17/2018 17:47:21'!
 hasRegistered: aTransaction
 
-	^ managedAccounts anySatisfy: [:anManagedAccount | anManagedAccount hasRegistered: aTransaction ]! !
+	^ managedAccounts anySatisfy: [:aManagedAccount | aManagedAccount hasRegistered: aTransaction ]! !
+
+!Portfolio methodsFor: 'testing' stamp: 'A.G. 10/18/2018 13:09:22'!
+managedAccounts
+
+	^ managedAccounts inject: OrderedCollection new into:[:result :current | result addAll: current managedAccounts.result]! !
 
 
 !Portfolio methodsFor: 'transactions' stamp: 'L 10/14/2018 19:55:37'!
@@ -183,10 +193,10 @@ transactionsOf: anAccount
 	ifNone:[self error: self class accountNotManagedMessageDescription ] ! !
 
 
-!Portfolio methodsFor: 'initialization' stamp: 'A.G. 10/11/2018 21:46:43'!
-initializeWith: anAccount and: anotherAccount
+!Portfolio methodsFor: 'initialization' stamp: 'A.G. 10/17/2018 17:20:54'!
+initializeWithAll: aManagedAccountsList
 
-	managedAccounts := OrderedCollection with:anAccount with:anotherAccount ! !
+	managedAccounts := OrderedCollection newFrom: aManagedAccountsList ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -194,15 +204,22 @@ initializeWith: anAccount and: anotherAccount
 Portfolio class
 	instanceVariableNames: ''!
 
-!Portfolio class methodsFor: 'instance creation' stamp: 'A.G. 10/11/2018 21:37:16'!
+!Portfolio class methodsFor: 'instance creation' stamp: 'A.G. 10/18/2018 11:51:03'!
 with: leftAccount with: rightAccount
 
-	^self new initializeWith: leftAccount and: rightAccount ! !
+	| accountList |
+	accountList := OrderedCollection with: leftAccount with: rightAccount.
+	^self withAll: accountList! !
 
-!Portfolio class methodsFor: 'instance creation' stamp: 'HernanWilkinson 7/13/2011 18:41'!
+!Portfolio class methodsFor: 'instance creation' stamp: 'A.G. 10/18/2018 13:00:53'!
 withAll: aCollectionOfAccounts
 
-	self shouldBeImplemented ! !
+	
+	| accounts |
+	accounts := aCollectionOfAccounts  inject: OrderedCollection new into:[:result :current | result addAll: current managedAccounts. result].
+	accounts detect: [:anAccount | (accounts occurrencesOf: anAccount) > 1]
+	ifNone: [^self new initializeWithAll: aCollectionOfAccounts].
+	^self error: self accountAlreadyManagedErrorMessage! !
 
 
 !Portfolio class methodsFor: 'error messages' stamp: 'HAW 5/8/2018 16:08:43'!
@@ -258,4 +275,10 @@ doesManage: anAccount
 hasRegistered: aTtransaction
 
 	^ transactions includes: aTtransaction 
+! !
+
+!ReceptiveAccount methodsFor: 'testing' stamp: 'A.G. 10/18/2018 12:30:05'!
+managedAccounts
+
+	^ OrderedCollection with: self
 ! !
