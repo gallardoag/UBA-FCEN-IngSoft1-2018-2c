@@ -1,16 +1,3 @@
-!classDefinition: #AccountAdapter category: #'Portfolio-Ejercicio'!
-Object subclass: #AccountAdapter
-	instanceVariableNames: 'adaptee'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
-
-!AccountAdapter methodsFor: 'as yet unclassified' stamp: 'A.G. 10/11/2018 21:11:26'!
-initialize: anAccountTransactionCollection
-
-	adaptee:= anAccountTransactionCollection ! !
-
-
 !classDefinition: #AccountTransaction category: #'Portfolio-Ejercicio'!
 Object subclass: #AccountTransaction
 	instanceVariableNames: ''
@@ -185,10 +172,10 @@ transactions
 
 	^ managedAccounts inject: OrderedCollection new into:[:result :current | result addAll: current transactions.result ] ! !
 
-!Portfolio methodsFor: 'transactions' stamp: 'L 10/14/2018 20:18:01'!
+!Portfolio methodsFor: 'transactions' stamp: 'LB 10/18/2018 15:40:19'!
 transactionsOf: anAccount 
 
-	^managedAccounts detect:[:aManagedAccount | (aManagedAccount doesManage: anAccount) or:[managedAccounts includes: anAccount ] ]  
+	^managedAccounts detect:[:anManagedAccount | (anManagedAccount doesManage: anAccount) or:[managedAccounts includes: anAccount ] ]  
 	ifFound:[:foundAccount | foundAccount transactions ]  
 	ifNone:[self error: self class accountNotManagedMessageDescription ] ! !
 
