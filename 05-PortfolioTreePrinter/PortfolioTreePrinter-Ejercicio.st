@@ -88,8 +88,26 @@ register: aValue on: account
 	^ withdraw! !
 
 
+!classDefinition: #TransferLeg category: #'Portfolio-Ejercicio'!
+AccountTransaction subclass: #TransferLeg
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!TransferLeg methodsFor: 'as yet unclassified' stamp: 'LB 10/18/2018 21:24:27'!
+balance
+
+	^ self subclassResponsibility ! !
+
+!TransferLeg methodsFor: 'as yet unclassified' stamp: 'LB 10/18/2018 21:24:35'!
+value
+
+	^ self subclassResponsibility ! !
+
+
 !classDefinition: #TransferFrom category: #'Portfolio-Ejercicio'!
-AccountTransaction subclass: #TransferFrom
+TransferLeg subclass: #TransferFrom
 	instanceVariableNames: 'transfer'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -129,7 +147,7 @@ with:aTransfer
 
 
 !classDefinition: #TransferTo category: #'Portfolio-Ejercicio'!
-AccountTransaction subclass: #TransferTo
+TransferLeg subclass: #TransferTo
 	instanceVariableNames: 'transfer'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -428,6 +446,36 @@ transfer: anAmount to: destination
 	destination register: depositLeg .
 	
 	^ transfer ! !
+
+
+!classDefinition: #SummaryPrinter category: #'Portfolio-Ejercicio'!
+Object subclass: #SummaryPrinter
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'SummaryPrinter class' category: #'Portfolio-Ejercicio'!
+SummaryPrinter class
+	instanceVariableNames: ''!
+
+!SummaryPrinter class methodsFor: 'as yet unclassified' stamp: 'LB 10/18/2018 21:29:46'!
+print:aTransaction
+
+	(aTransaction isKindOf: Deposit ) ifTrue: [^ 'Deposito por ' , (aTransaction value) asString ].
+	(aTransaction isKindOf: TransferLeg ) ifTrue: [^ 'Transferencia por ' , (aTransaction balance) asString ].
+	(aTransaction isKindOf: Withdraw ) ifTrue: [^ 'Extraccion por ' , (aTransaction value) asString ].! !
+
+!SummaryPrinter class methodsFor: 'as yet unclassified' stamp: 'LB 10/18/2018 21:25:32'!
+summaryOf:anAccount
+
+	|transaction|
+	
+	transaction _ anAccount transactions .
+
+	^transaction inject: OrderedCollection new into:[:result :current | result add:(self print:current).result ] ! !
 
 
 !classDefinition: #Transfer category: #'Portfolio-Ejercicio'!
