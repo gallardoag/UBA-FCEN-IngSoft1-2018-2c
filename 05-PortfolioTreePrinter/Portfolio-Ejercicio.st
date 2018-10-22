@@ -455,20 +455,29 @@ Object subclass: #SummaryPrinter
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'SummaryPrinter class' category: #'Portfolio-Ejercicio'!
-SummaryPrinter class
-	instanceVariableNames: ''!
-
-!SummaryPrinter class methodsFor: 'as yet unclassified' stamp: 'LB 10/18/2018 21:29:46'!
+!SummaryPrinter methodsFor: 'printing' stamp: 'A.G. 10/22/2018 09:20:27'!
 print:aTransaction
 
 	(aTransaction isKindOf: Deposit ) ifTrue: [^ 'Deposito por ' , (aTransaction value) asString ].
 	(aTransaction isKindOf: TransferLeg ) ifTrue: [^ 'Transferencia por ' , (aTransaction balance) asString ].
 	(aTransaction isKindOf: Withdraw ) ifTrue: [^ 'Extraccion por ' , (aTransaction value) asString ].! !
 
-!SummaryPrinter class methodsFor: 'as yet unclassified' stamp: 'LB 10/18/2018 21:25:32'!
+!SummaryPrinter methodsFor: 'printing' stamp: 'A.G. 10/22/2018 09:24:29'!
+printDeposit:aDepositTransaction
+
+	^ 'Deposito por ' , (aDepositTransaction value) asString! !
+
+!SummaryPrinter methodsFor: 'printing' stamp: 'A.G. 10/22/2018 09:29:36'!
+printTransfer:aTransferTransaction
+
+	^ 'Transferencia por ' , (aTransferTransaction balance) asString! !
+
+!SummaryPrinter methodsFor: 'printing' stamp: 'A.G. 10/22/2018 09:25:34'!
+printWithdraw:aWithdrawTransaction
+
+	^ 'Extraccion por ' , (aWithdrawTransaction value) asString! !
+
+!SummaryPrinter methodsFor: 'printing' stamp: 'A.G. 10/22/2018 09:20:41'!
 summaryOf:anAccount
 
 	|transaction|
