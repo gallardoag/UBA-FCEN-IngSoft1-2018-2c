@@ -390,7 +390,7 @@ test22AccountSummaryShouldProvideHumanReadableTransactionsDetail
 	self assert: 'Transferencia por 100' equals: (toAccountLines at: 1).
 	! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'HAW 10/18/2018 16:36:40'!
+!PortfolioTest methodsFor: 'tests' stamp: 'das 10/22/2018 17:37:42'!
 test23ShouldBeAbleToBeQueryTransferNet
 
 	| fromAccount toAccount |
@@ -528,35 +528,38 @@ test29ReversePortfolioTreePrinterPrintsTheCompositeStartingFromTheLeaves
 	! !
 
 
-!PortfolioTest methodsFor: 'test support' stamp: 'LB 10/18/2018 21:26:29'!
+!PortfolioTest methodsFor: 'test support' stamp: 'das 10/22/2018 19:19:59'!
 accountSummaryLinesOf: aReceptiveAccount 
 	
-	^ SummaryPrinter summaryOf: aReceptiveAccount ! !
+	^(SummaryVisitor with: aReceptiveAccount) value! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'HernanWilkinson 9/6/2016 19:43'!
+!PortfolioTest methodsFor: 'test support' stamp: 'das 10/22/2018 19:39:39'!
 accountTransferNetOf: aReceptiveAccount 
 	
-	self shouldBeImplemented ! !
+	^ (TransferNetVisitor with:aReceptiveAccount ) value! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'HernanWilkinson 9/6/2016 19:43'!
+!PortfolioTest methodsFor: 'test support' stamp: 'das 10/22/2018 20:27:17'!
 investmentEarningsOf: aReceptiveAccount 
 	
-	self shouldBeImplemented ! !
+	^ (InvestmentEarningsVisitor with:aReceptiveAccount ) value! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'HernanWilkinson 9/6/2016 19:43'!
+!PortfolioTest methodsFor: 'test support' stamp: 'das 10/22/2018 20:11:29'!
 investmentNetOf: aReceptiveAccount 
 	
-	self shouldBeImplemented ! !
+	^ (InvestmentNetVisitor with:aReceptiveAccount) value! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'HernanWilkinson 9/6/2016 19:43'!
+!PortfolioTest methodsFor: 'test support' stamp: 'das 10/22/2018 19:06:23'!
 portofolioTreeOf: aPortfolio namingAccountWith: aDictionary 
 	
-	self shouldBeImplemented ! !
+	^ self shouldBeImplemented ! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'HAW 10/18/2018 16:38:05'!
+!PortfolioTest methodsFor: 'test support' stamp: 'das 10/22/2018 19:50:33'!
 registerCertificateOfDepositOf: anAmount during: aNumberOfDays at: anInteresRate on: anAccount
 
-	self shouldBeImplemented ! !
+	|certificateOfDeposit|
+	certificateOfDeposit _ CertificateOfDeposit of: anAmount during:aNumberOfDays  at:anInteresRate .
+
+	anAccount register:certificateOfDeposit .! !
 
 !PortfolioTest methodsFor: 'test support' stamp: 'LB 10/18/2018 19:36:29'!
 registerTransferOf: anAmount from: fromAccount to: toAccount

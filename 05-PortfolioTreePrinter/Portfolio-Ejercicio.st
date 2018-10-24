@@ -38,6 +38,57 @@ register: aValue on: account
 	^ withdraw! !
 
 
+!classDefinition: #CertificateOfDeposit category: #'Portfolio-Ejercicio'!
+AccountTransaction subclass: #CertificateOfDeposit
+	instanceVariableNames: 'value duration rate'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!CertificateOfDeposit methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:08:45'!
+balance
+
+	^ value negated ! !
+
+!CertificateOfDeposit methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:21:00'!
+duration
+
+	^ duration ! !
+
+!CertificateOfDeposit methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:48:05'!
+initializeWith:anAmount and:aDuration and:aRate 
+
+	value _ anAmount .
+	duration _ aDuration .
+	rate _ aRate .! !
+
+!CertificateOfDeposit methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:20:49'!
+interestRate
+
+	^ rate! !
+
+!CertificateOfDeposit methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:01:08'!
+value
+
+	^ value ! !
+
+
+!CertificateOfDeposit methodsFor: '*Chalten-Time Extensions' stamp: 'das 10/22/2018 20:05:32'!
+accept: aVisitor 
+	aVisitor visitCertificateOfDeposit: self! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CertificateOfDeposit class' category: #'Portfolio-Ejercicio'!
+CertificateOfDeposit class
+	instanceVariableNames: ''!
+
+!CertificateOfDeposit class methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:47:19'!
+of:anAmount during:aDuration at:aRate
+
+	^ self new initializeWith:anAmount and:aDuration and:aRate ! !
+
+
 !classDefinition: #Deposit category: #'Portfolio-Ejercicio'!
 AccountTransaction subclass: #Deposit
 	instanceVariableNames: 'value'
@@ -65,6 +116,12 @@ balance
 value
 
 	^ value! !
+
+
+!Deposit methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:16:00'!
+accept: aVisitor
+
+	aVisitor visitDeposit: self! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -113,6 +170,11 @@ TransferLeg subclass: #TransferFrom
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
+!TransferFrom methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:16:53'!
+accept: aVisitor
+
+	aVisitor visitTransferFrom: self! !
+
 !TransferFrom methodsFor: 'as yet unclassified' stamp: 'LB 10/18/2018 20:27:04'!
 balance
 
@@ -153,6 +215,11 @@ TransferLeg subclass: #TransferTo
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
+!TransferTo methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:17:21'!
+accept: aVisitor
+
+	aVisitor visitTransferTo: self! !
+
 !TransferTo methodsFor: 'as yet unclassified' stamp: 'LB 10/18/2018 20:27:33'!
 balance
 
@@ -191,6 +258,11 @@ AccountTransaction subclass: #Withdraw
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
+
+!Withdraw methodsFor: 'initialization' stamp: 'das 10/22/2018 19:17:36'!
+accept: aVisitor
+
+	aVisitor visitWithdraw: self! !
 
 !Withdraw methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:46'!
 initializeFor: aValue
@@ -235,6 +307,302 @@ register: aValue on: account
 	^ withdraw! !
 
 
+!classDefinition: #PortfolioTreePrinterVisitor category: #'Portfolio-Ejercicio'!
+Object subclass: #PortfolioTreePrinterVisitor
+	instanceVariableNames: 'portofolio diccionary lines depth'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:41:53'!
+initializeWith:aPortofolio
+
+	portofolio  _ aPortofolio .! !
+
+!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:56:20'!
+initializeWith: aPortofolio using:aDiccionary 
+
+	portofolio  _ aPortofolio .
+	diccionary  _ aDiccionary .
+	depth _ 0.! !
+
+!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 21:02:57'!
+value
+! !
+
+!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:53:26'!
+visitPortofolio:aPortofolio! !
+
+!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:59:46'!
+visitReceptiveAcount:aReceptiveAccount
+
+	|lineToAdd|
+	lineToAdd  _ (String new:depth) atAllPut: ' ' , (diccionary at:aReceptiveAccount ).
+	
+	
+	lines add:lineToAdd .
+
+	depth _ depth  + 1.	! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PortfolioTreePrinterVisitor class' category: #'Portfolio-Ejercicio'!
+PortfolioTreePrinterVisitor class
+	instanceVariableNames: ''!
+
+!PortfolioTreePrinterVisitor class methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:42:59'!
+with:aPortofolio using:aDiccionary
+
+	^ self new initializeWith: aPortofolio using:aDiccionary ! !
+
+
+!classDefinition: #PortofolioVisitor category: #'Portfolio-Ejercicio'!
+Object subclass: #PortofolioVisitor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+
+!classDefinition: #SumarizingAccountVisitor category: #'Portfolio-Ejercicio'!
+Object subclass: #SumarizingAccountVisitor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+
+!classDefinition: #InvestmentEarningsVisitor category: #'Portfolio-Ejercicio'!
+SumarizingAccountVisitor subclass: #InvestmentEarningsVisitor
+	instanceVariableNames: 'account acum'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:18:13'!
+initializeWith:anAccount
+
+	account _ anAccount ! !
+
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:23:46'!
+value
+
+	acum  _ 0.
+	
+	account transactions do:[:aTransaction | aTransaction accept:self ].
+	
+	^ acum ! !
+
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:26:41'!
+visitCertificateOfDeposit:aCertificateOfDeposit
+
+	|earnings|
+	
+	earnings _ (aCertificateOfDeposit value * (aCertificateOfDeposit interestRate / 360) ) * aCertificateOfDeposit duration .
+
+	acum _ acum + earnings ! !
+
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:19:53'!
+visitDepoisit:aDeposit! !
+
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:20:17'!
+visitTransferFrom:aTransferFrom! !
+
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:20:27'!
+visitTransferTo:aTransferTo! !
+
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:20:03'!
+visitWithdraw:aWithdraw! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'InvestmentEarningsVisitor class' category: #'Portfolio-Ejercicio'!
+InvestmentEarningsVisitor class
+	instanceVariableNames: ''!
+
+!InvestmentEarningsVisitor class methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:16:50'!
+with:anAccount
+
+	^ self new initializeWith: anAccount ! !
+
+
+!classDefinition: #InvestmentNetVisitor category: #'Portfolio-Ejercicio'!
+SumarizingAccountVisitor subclass: #InvestmentNetVisitor
+	instanceVariableNames: 'account acum'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:56:52'!
+initializeWith:anAccount
+
+	account  _ anAccount .! !
+
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:02:45'!
+value
+
+	acum _ 0.
+
+	account transactions do:[:aTransaction | aTransaction accept:self ].
+	^ acum.
+	! !
+
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:02:59'!
+visitCertificateOfDeposit:aCertificateOfDeposit
+
+	acum _ acum + aCertificateOfDeposit value! !
+
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:57:10'!
+visitDeposit:aDeposit! !
+
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:57:47'!
+visitTransferFrom:aTransferFrom! !
+
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:58:45'!
+visitTransferTo:aTransferTo! !
+
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:57:31'!
+visitWithdraw:aWithdraw! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'InvestmentNetVisitor class' category: #'Portfolio-Ejercicio'!
+InvestmentNetVisitor class
+	instanceVariableNames: ''!
+
+!InvestmentNetVisitor class methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:56:09'!
+with:anAccount
+
+	^ self new initializeWith: anAccount ! !
+
+
+!classDefinition: #SummaryVisitor category: #'Portfolio-Ejercicio'!
+SumarizingAccountVisitor subclass: #SummaryVisitor
+	instanceVariableNames: 'account lines'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!SummaryVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:30:26'!
+value
+
+	lines:= OrderedCollection new.
+	account transactions do: [:transaction | transaction accept: self].
+	^lines! !
+
+!SummaryVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:37:09'!
+visitCertificateOfDeposit:aCertificateOfDeposit
+
+	lines add:'Plazo fijo por ',aCertificateOfDeposit value asString , ' durante ',aCertificateOfDeposit duration asString ,' dias a una tna de ', (aCertificateOfDeposit interestRate * 100 )asString ,'%'.! !
+
+!SummaryVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:10:41'!
+visitDeposit: aDeposit
+
+	lines add: 'Deposito por ', aDeposit  value asString.! !
+
+!SummaryVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:13:43'!
+visitTransferFrom: aTransferFrom
+
+	lines add: 'Transferencia por ', aTransferFrom  value asString.! !
+
+!SummaryVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:13:59'!
+visitTransferTo: aTransferTo
+
+	lines add: 'Transferencia por ', aTransferTo  value  negated asString.! !
+
+!SummaryVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:11:46'!
+visitWithdraw: aWithdraw
+
+	lines add: 'Extraccion por ', aWithdraw  value asString.! !
+
+
+!SummaryVisitor methodsFor: 'initialization' stamp: 'das 10/22/2018 19:22:09'!
+initializeWith: aReceptiveAccount 
+	
+	account := aReceptiveAccount ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'SummaryVisitor class' category: #'Portfolio-Ejercicio'!
+SummaryVisitor class
+	instanceVariableNames: ''!
+
+!SummaryVisitor class methodsFor: 'initialization' stamp: 'das 10/22/2018 19:21:28'!
+with: aReceptiveAccount 
+	
+	^self new initializeWith: aReceptiveAccount ! !
+
+
+!classDefinition: #TransferNetVisitor category: #'Portfolio-Ejercicio'!
+SumarizingAccountVisitor subclass: #TransferNetVisitor
+	instanceVariableNames: 'account transferNet'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:32:42'!
+initializeWith:anAccount
+
+	account _ anAccount ! !
+
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 17:37:15'!
+transferNetOfAccount:anAccount
+
+	|transactions|
+	
+	transactions _ anAccount transactions .
+	
+	transactions _ transactions select:[:aTransaction | aTransaction isKindOf: TransferLeg ]
+	.
+	^transactions inject: 0 into:[:result :current | result + (current balance) ] ! !
+
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:36:15'!
+value
+
+	transferNet _ 0.
+	
+	account transactions do: [:aTransaction | aTransaction accept:self].
+	
+	^ transferNet ! !
+
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:38:39'!
+visitCertificateOfDeposit:aCertificateOfDeposit! !
+
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:36:53'!
+visitDeposit:aDeposit
+
+! !
+
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:38:06'!
+visitTransferFrom:aTransferFrom
+
+	 transferNet  _ transferNet + aTransferFrom value
+
+! !
+
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:38:46'!
+visitTransferTo:aTransferTo
+
+	 transferNet  _ transferNet - aTransferTo value 
+! !
+
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:37:12'!
+visitWithdraw:aWithdraw
+
+! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TransferNetVisitor class' category: #'Portfolio-Ejercicio'!
+TransferNetVisitor class
+	instanceVariableNames: ''!
+
+!TransferNetVisitor class methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:32:57'!
+with:anAccount
+
+	^ self new initializeWith: anAccount .! !
+
+
 !classDefinition: #SummarizingAccount category: #'Portfolio-Ejercicio'!
 Object subclass: #SummarizingAccount
 	instanceVariableNames: ''
@@ -277,10 +645,10 @@ SummarizingAccount subclass: #Portfolio
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!Portfolio methodsFor: 'testing' stamp: 'HAW 10/18/2018 16:31:24'!
+!Portfolio methodsFor: 'testing' stamp: 'das 10/22/2018 21:05:53'!
 anyManagedAccountManages: anAccount 
 
-	^accounts anySatisfy: [ :managedAccount | (managedAccount doesManage: anAccount) or: [ anAccount doesManage: managedAccount ] ] ! !
+	^managedAccounts anySatisfy: [ :managedAccount | (managedAccount doesManage: anAccount) or: [ anAccount doesManage: managedAccount ] ] ! !
 
 !Portfolio methodsFor: 'testing' stamp: 'A.G. 10/17/2018 17:47:11'!
 doesManage: anAccount
@@ -322,6 +690,12 @@ initializeWithAll: aManagedAccountsList
 balance
 
 	^ managedAccounts inject: 0 into: [ :result :current | result + (current balance)] ! !
+
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 21:01:19'!
+accept:aPortfolioVisitor
+
+	aPortfolioVisitor visitPortofolio: self.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -447,44 +821,11 @@ transfer: anAmount to: destination
 	
 	^ transfer ! !
 
-
-!classDefinition: #SummaryPrinter category: #'Portfolio-Ejercicio'!
-Object subclass: #SummaryPrinter
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
 
-!SummaryPrinter methodsFor: 'printing' stamp: 'A.G. 10/22/2018 09:20:27'!
-print:aTransaction
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 21:01:42'!
+accept:aVisitor
 
-	(aTransaction isKindOf: Deposit ) ifTrue: [^ 'Deposito por ' , (aTransaction value) asString ].
-	(aTransaction isKindOf: TransferLeg ) ifTrue: [^ 'Transferencia por ' , (aTransaction balance) asString ].
-	(aTransaction isKindOf: Withdraw ) ifTrue: [^ 'Extraccion por ' , (aTransaction value) asString ].! !
-
-!SummaryPrinter methodsFor: 'printing' stamp: 'A.G. 10/22/2018 09:24:29'!
-printDeposit:aDepositTransaction
-
-	^ 'Deposito por ' , (aDepositTransaction value) asString! !
-
-!SummaryPrinter methodsFor: 'printing' stamp: 'A.G. 10/22/2018 09:29:36'!
-printTransfer:aTransferTransaction
-
-	^ 'Transferencia por ' , (aTransferTransaction balance) asString! !
-
-!SummaryPrinter methodsFor: 'printing' stamp: 'A.G. 10/22/2018 09:25:34'!
-printWithdraw:aWithdrawTransaction
-
-	^ 'Extraccion por ' , (aWithdrawTransaction value) asString! !
-
-!SummaryPrinter methodsFor: 'printing' stamp: 'A.G. 10/22/2018 09:20:41'!
-summaryOf:anAccount
-
-	|transaction|
-	
-	transaction _ anAccount transactions .
-
-	^transaction inject: OrderedCollection new into:[:result :current | result add:(self print:current).result ] ! !
+	aVisitor visitReceptiveAcount: self .! !
 
 
 !classDefinition: #Transfer category: #'Portfolio-Ejercicio'!
