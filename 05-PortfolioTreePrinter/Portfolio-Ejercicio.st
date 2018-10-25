@@ -307,61 +307,6 @@ register: aValue on: account
 	^ withdraw! !
 
 
-!classDefinition: #PortfolioTreePrinterVisitor category: #'Portfolio-Ejercicio'!
-Object subclass: #PortfolioTreePrinterVisitor
-	instanceVariableNames: 'portfolio diccionary lines'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
-
-!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/24/2018 23:57:22'!
-initializeWith: aPortofolio using:aDiccionary 
-
-	portfolio  _ aPortofolio .
-	diccionary  _ aDiccionary .! !
-
-!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 15:53:33'!
-value
-
-	lines  _ OrderedCollection  new.
-	
-	portfolio accept: self with:0.
-	
-	^ lines! !
-
-!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:06:49'!
-visitPortfolio:aPortofolio with:aDepth
-
-	|lineToAdd |
-	
-	lineToAdd  _ ((String new:aDepth) atAllPut:$ ),(diccionary at:aPortofolio ).
-	
-	
-	lines add:lineToAdd.
-	
-	aPortofolio managedAccountsDo: [:account | account accept: self with:aDepth+1]! !
-
-!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:06:31'!
-visitReceptiveAcount:aReceptiveAccount with:aDepth
-
-	|lineToAdd |
-	lineToAdd  _ ((String new:aDepth) atAllPut:$ ), (diccionary at:aReceptiveAccount ).
-	
-	
-	lines add:lineToAdd.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'PortfolioTreePrinterVisitor class' category: #'Portfolio-Ejercicio'!
-PortfolioTreePrinterVisitor class
-	instanceVariableNames: ''!
-
-!PortfolioTreePrinterVisitor class methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:42:59'!
-with:aPortofolio using:aDiccionary
-
-	^ self new initializeWith: aPortofolio using:aDiccionary ! !
-
-
 !classDefinition: #SumarizingAccountVisitor category: #'Portfolio-Ejercicio'!
 Object subclass: #SumarizingAccountVisitor
 	instanceVariableNames: ''
@@ -382,12 +327,12 @@ initializeWith:anAccount
 
 	account _ anAccount ! !
 
-!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:23:46'!
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:30:43'!
 value
 
 	acum  _ 0.
 	
-	account transactions do:[:aTransaction | aTransaction accept:self ].
+	account transactionsDo:[:aTransaction | aTransaction accept:self ].
 	
 	^ acum ! !
 
@@ -400,17 +345,25 @@ visitCertificateOfDeposit:aCertificateOfDeposit
 
 	acum _ acum + earnings ! !
 
-!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 15:29:13'!
-visitDeposit:aDeposit! !
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:30:55'!
+visitDeposit:aDeposit
 
-!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:20:17'!
-visitTransferFrom:aTransferFrom! !
+	^0! !
 
-!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:20:27'!
-visitTransferTo:aTransferTo! !
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:31:01'!
+visitTransferFrom:aTransferFrom
 
-!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:20:03'!
-visitWithdraw:aWithdraw! !
+	^0! !
+
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:31:08'!
+visitTransferTo:aTransferTo
+
+	^0! !
+
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:31:14'!
+visitWithdraw:aWithdraw
+
+	^0! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -436,12 +389,12 @@ initializeWith:anAccount
 
 	account  _ anAccount .! !
 
-!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:02:45'!
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:29:40'!
 value
 
 	acum _ 0.
 
-	account transactions do:[:aTransaction | aTransaction accept:self ].
+	account transactionsDo:[:aTransaction | aTransaction accept:self ].
 	^ acum.
 	! !
 
@@ -450,17 +403,25 @@ visitCertificateOfDeposit:aCertificateOfDeposit
 
 	acum _ acum + aCertificateOfDeposit value! !
 
-!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:57:10'!
-visitDeposit:aDeposit! !
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:29:55'!
+visitDeposit:aDeposit
 
-!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:57:47'!
-visitTransferFrom:aTransferFrom! !
+	^0! !
 
-!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:58:45'!
-visitTransferTo:aTransferTo! !
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:30:04'!
+visitTransferFrom:aTransferFrom
 
-!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:57:31'!
-visitWithdraw:aWithdraw! !
+	^0! !
+
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:30:11'!
+visitTransferTo:aTransferTo
+
+	^0! !
+
+!InvestmentNetVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:30:17'!
+visitWithdraw:aWithdraw
+
+	^0! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -481,11 +442,11 @@ SumarizingAccountVisitor subclass: #SummaryVisitor
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!SummaryVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:30:26'!
+!SummaryVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:29:10'!
 value
 
 	lines:= OrderedCollection new.
-	account transactions do: [:transaction | transaction accept: self].
+	account transactionsDo: [:transaction | transaction accept: self].
 	^lines! !
 
 !SummaryVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:37:09'!
@@ -543,33 +504,24 @@ initializeWith:anAccount
 
 	account _ anAccount ! !
 
-!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 17:37:15'!
-transferNetOfAccount:anAccount
-
-	|transactions|
-	
-	transactions _ anAccount transactions .
-	
-	transactions _ transactions select:[:aTransaction | aTransaction isKindOf: TransferLeg ]
-	.
-	^transactions inject: 0 into:[:result :current | result + (current balance) ] ! !
-
-!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:36:15'!
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:21:55'!
 value
 
 	transferNet _ 0.
 	
-	account transactions do: [:aTransaction | aTransaction accept:self].
+	account transactionsDo: [:aTransaction | aTransaction accept:self].
 	
 	^ transferNet ! !
 
-!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:38:39'!
-visitCertificateOfDeposit:aCertificateOfDeposit! !
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:28:28'!
+visitCertificateOfDeposit:aCertificateOfDeposit
 
-!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:36:53'!
+	^0! !
+
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:28:08'!
 visitDeposit:aDeposit
 
-! !
+	^0! !
 
 !TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:38:06'!
 visitTransferFrom:aTransferFrom
@@ -584,10 +536,10 @@ visitTransferTo:aTransferTo
 	 transferNet  _ transferNet - aTransferTo value 
 ! !
 
-!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:37:12'!
+!TransferNetVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:28:16'!
 visitWithdraw:aWithdraw
 
-! !
+	^0! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -599,6 +551,61 @@ TransferNetVisitor class
 with:anAccount
 
 	^ self new initializeWith: anAccount .! !
+
+
+!classDefinition: #TreePrinterVisitor category: #'Portfolio-Ejercicio'!
+SumarizingAccountVisitor subclass: #TreePrinterVisitor
+	instanceVariableNames: 'portfolio diccionary lines'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!TreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/24/2018 23:57:22'!
+initializeWith: aPortofolio using:aDiccionary 
+
+	portfolio  _ aPortofolio .
+	diccionary  _ aDiccionary .! !
+
+!TreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 15:53:33'!
+value
+
+	lines  _ OrderedCollection  new.
+	
+	portfolio accept: self with:0.
+	
+	^ lines! !
+
+!TreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:06:49'!
+visitPortfolio:aPortofolio with:aDepth
+
+	|lineToAdd |
+	
+	lineToAdd  _ ((String new:aDepth) atAllPut:$ ),(diccionary at:aPortofolio ).
+	
+	
+	lines add:lineToAdd.
+	
+	aPortofolio managedAccountsDo: [:account | account accept: self with:aDepth+1]! !
+
+!TreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:06:31'!
+visitReceptiveAcount:aReceptiveAccount with:aDepth
+
+	|lineToAdd |
+	lineToAdd  _ ((String new:aDepth) atAllPut:$ ), (diccionary at:aReceptiveAccount ).
+	
+	
+	lines add:lineToAdd.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TreePrinterVisitor class' category: #'Portfolio-Ejercicio'!
+TreePrinterVisitor class
+	instanceVariableNames: ''!
+
+!TreePrinterVisitor class methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:42:59'!
+with:aPortofolio using:aDiccionary
+
+	^ self new initializeWith: aPortofolio using:aDiccionary ! !
 
 
 !classDefinition: #SummarizingAccount category: #'Portfolio-Ejercicio'!
@@ -669,6 +676,11 @@ managedAccounts
 transactions 
 
 	^ managedAccounts inject: OrderedCollection new into:[:result :current | result addAll: current transactions.result ] ! !
+
+!Portfolio methodsFor: 'transactions' stamp: 'A.G. 10/25/2018 16:25:28'!
+transactionsDo:aBlock
+
+	managedAccounts do:aBlock! !
 
 !Portfolio methodsFor: 'transactions' stamp: 'LB 10/18/2018 15:40:19'!
 transactionsOf: anAccount 
@@ -794,6 +806,11 @@ register: aTransaction
 transactions 
 
 	^ transactions copy! !
+
+!ReceptiveAccount methodsFor: 'transactions' stamp: 'A.G. 10/25/2018 16:26:25'!
+transactionsDo:aBlock
+
+	transactions do: aBlock! !
 
 
 !ReceptiveAccount methodsFor: 'testing' stamp: 'HAW 10/11/2018 16:53:28'!
