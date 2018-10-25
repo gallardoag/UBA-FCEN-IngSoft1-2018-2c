@@ -309,40 +309,46 @@ register: aValue on: account
 
 !classDefinition: #PortfolioTreePrinterVisitor category: #'Portfolio-Ejercicio'!
 Object subclass: #PortfolioTreePrinterVisitor
-	instanceVariableNames: 'portofolio diccionary lines depth'
+	instanceVariableNames: 'portfolio diccionary lines'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:41:53'!
-initializeWith:aPortofolio
-
-	portofolio  _ aPortofolio .! !
-
-!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:56:20'!
+!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/24/2018 23:57:22'!
 initializeWith: aPortofolio using:aDiccionary 
 
-	portofolio  _ aPortofolio .
-	diccionary  _ aDiccionary .
-	depth _ 0.! !
+	portfolio  _ aPortofolio .
+	diccionary  _ aDiccionary .! !
 
-!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 21:02:57'!
+!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 15:53:33'!
 value
-! !
 
-!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:53:26'!
-visitPortofolio:aPortofolio! !
+	lines  _ OrderedCollection  new.
+	
+	portfolio accept: self with:0.
+	
+	^ lines! !
 
-!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:59:46'!
-visitReceptiveAcount:aReceptiveAccount
+!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:06:49'!
+visitPortfolio:aPortofolio with:aDepth
 
-	|lineToAdd|
-	lineToAdd  _ (String new:depth) atAllPut: ' ' , (diccionary at:aReceptiveAccount ).
+	|lineToAdd |
+	
+	lineToAdd  _ ((String new:aDepth) atAllPut:$ ),(diccionary at:aPortofolio ).
 	
 	
-	lines add:lineToAdd .
+	lines add:lineToAdd.
+	
+	aPortofolio managedAccountsDo: [:account | account accept: self with:aDepth+1]! !
 
-	depth _ depth  + 1.	! !
+!PortfolioTreePrinterVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:06:31'!
+visitReceptiveAcount:aReceptiveAccount with:aDepth
+
+	|lineToAdd |
+	lineToAdd  _ ((String new:aDepth) atAllPut:$ ), (diccionary at:aReceptiveAccount ).
+	
+	
+	lines add:lineToAdd.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -354,14 +360,6 @@ PortfolioTreePrinterVisitor class
 with:aPortofolio using:aDiccionary
 
 	^ self new initializeWith: aPortofolio using:aDiccionary ! !
-
-
-!classDefinition: #PortofolioVisitor category: #'Portfolio-Ejercicio'!
-Object subclass: #PortofolioVisitor
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
 
 
 !classDefinition: #SumarizingAccountVisitor category: #'Portfolio-Ejercicio'!
@@ -402,8 +400,8 @@ visitCertificateOfDeposit:aCertificateOfDeposit
 
 	acum _ acum + earnings ! !
 
-!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:19:53'!
-visitDepoisit:aDeposit! !
+!InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 15:29:13'!
+visitDeposit:aDeposit! !
 
 !InvestmentEarningsVisitor methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 20:20:17'!
 visitTransferFrom:aTransferFrom! !
@@ -697,6 +695,21 @@ accept:aPortfolioVisitor
 
 	aPortfolioVisitor visitPortofolio: self.! !
 
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'A.G. 10/24/2018 23:59:33'!
+accept:aPortfolioVisitor at:aDepth
+
+	aPortfolioVisitor visitPortofolio: self at:aDepth.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 15:28:34'!
+accept:aPortfolioVisitor with:aCollaborator
+
+	aPortfolioVisitor visitPortfolio: self with:aCollaborator .! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 16:02:50'!
+managedAccountsDo:aBlock
+
+	managedAccounts do: aBlock.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Portfolio class' category: #'Portfolio-Ejercicio'!
@@ -826,6 +839,11 @@ transfer: anAmount to: destination
 accept:aVisitor
 
 	aVisitor visitReceptiveAcount: self .! !
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 00:00:44'!
+accept:aVisitor with:aCollaborator
+
+	aVisitor visitReceptiveAcount: self with:aCollaborator.! !
 
 
 !classDefinition: #Transfer category: #'Portfolio-Ejercicio'!

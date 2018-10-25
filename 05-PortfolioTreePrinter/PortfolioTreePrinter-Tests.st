@@ -548,10 +548,10 @@ investmentNetOf: aReceptiveAccount
 	
 	^ (InvestmentNetVisitor with:aReceptiveAccount) value! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'das 10/22/2018 19:06:23'!
+!PortfolioTest methodsFor: 'test support' stamp: 'A.G. 10/25/2018 15:34:15'!
 portofolioTreeOf: aPortfolio namingAccountWith: aDictionary 
 	
-	^ self shouldBeImplemented ! !
+	^ (PortfolioTreePrinterVisitor with:aPortfolio  using:aDictionary ) value! !
 
 !PortfolioTest methodsFor: 'test support' stamp: 'das 10/22/2018 19:50:33'!
 registerCertificateOfDepositOf: anAmount during: aNumberOfDays at: anInteresRate on: anAccount
@@ -566,7 +566,13 @@ registerTransferOf: anAmount from: fromAccount to: toAccount
 
 	^fromAccount transfer:anAmount to:toAccount .! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'HernanWilkinson 9/6/2016 19:43'!
+!PortfolioTest methodsFor: 'test support' stamp: 'A.G. 10/25/2018 16:15:11'!
 reversePortofolioTreeOf: aPortfolio namingAccountWith: aDictionary 
 	
-	self shouldBeImplemented ! !
+	|lines linesReverted|
+	linesReverted := OrderedCollection new.
+	lines := (PortfolioTreePrinterVisitor with:aPortfolio  using:aDictionary ) value.
+	
+	lines reverseDo: [:line | linesReverted add: line].
+	
+	^linesReverted! !
