@@ -548,7 +548,7 @@ investmentNetOf: aReceptiveAccount
 	
 	^ (InvestmentNetVisitor with:aReceptiveAccount) value! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'A.G. 10/25/2018 16:20:16'!
+!PortfolioTest methodsFor: 'test support' stamp: 'das 10/25/2018 16:39:27'!
 portofolioTreeOf: aPortfolio namingAccountWith: aDictionary 
 	
 	^ (TreePrinterVisitor with:aPortfolio  using:aDictionary ) value! !
@@ -566,7 +566,7 @@ registerTransferOf: anAmount from: fromAccount to: toAccount
 
 	^fromAccount transfer:anAmount to:toAccount .! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'A.G. 10/25/2018 16:20:16'!
+!PortfolioTest methodsFor: 'test support' stamp: 'das 10/25/2018 16:39:55'!
 reversePortofolioTreeOf: aPortfolio namingAccountWith: aDictionary 
 	
 	|lines linesReverted|

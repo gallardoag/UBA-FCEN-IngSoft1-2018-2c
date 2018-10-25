@@ -73,7 +73,7 @@ value
 	^ value ! !
 
 
-!CertificateOfDeposit methodsFor: '*Chalten-Time Extensions' stamp: 'das 10/22/2018 20:05:32'!
+!CertificateOfDeposit methodsFor: 'visiting' stamp: 'das 10/22/2018 20:05:32'!
 accept: aVisitor 
 	aVisitor visitCertificateOfDeposit: self! !
 
@@ -118,7 +118,7 @@ value
 	^ value! !
 
 
-!Deposit methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:16:00'!
+!Deposit methodsFor: 'visiting' stamp: 'das 10/22/2018 19:16:00'!
 accept: aVisitor
 
 	aVisitor visitDeposit: self! !
@@ -191,7 +191,7 @@ transfer
 	^ transfer ! !
 
 
-!TransferFrom methodsFor: '*Chalten-Time Extensions' stamp: 'LB 10/18/2018 20:27:57'!
+!TransferFrom methodsFor: 'visiting' stamp: 'LB 10/18/2018 20:27:57'!
 value
 
 	^self transfer value! !
@@ -215,11 +215,6 @@ TransferLeg subclass: #TransferTo
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!TransferTo methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 19:17:21'!
-accept: aVisitor
-
-	aVisitor visitTransferTo: self! !
-
 !TransferTo methodsFor: 'as yet unclassified' stamp: 'LB 10/18/2018 20:27:33'!
 balance
 
@@ -240,6 +235,12 @@ value
 
 	^ self transfer value ! !
 
+
+!TransferTo methodsFor: 'visiting' stamp: 'das 10/22/2018 19:17:21'!
+accept: aVisitor
+
+	aVisitor visitTransferTo: self! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'TransferTo class' category: #'Portfolio-Ejercicio'!
@@ -259,21 +260,11 @@ AccountTransaction subclass: #Withdraw
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!Withdraw methodsFor: 'initialization' stamp: 'das 10/22/2018 19:17:36'!
-accept: aVisitor
-
-	aVisitor visitWithdraw: self! !
-
 !Withdraw methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:46'!
 initializeFor: aValue
 
 	value := aValue ! !
 
-
-!Withdraw methodsFor: 'value' stamp: 'HAW 10/18/2018 18:49:08'!
-affectBalance: currentBalance
-
-	^currentBalance - value! !
 
 !Withdraw methodsFor: 'value' stamp: 'A.G. 10/11/2018 21:22:17'!
 balance
@@ -284,6 +275,12 @@ balance
 value
 
 	^ value! !
+
+
+!Withdraw methodsFor: 'visiting' stamp: 'das 10/22/2018 19:17:36'!
+accept: aVisitor
+
+	aVisitor visitWithdraw: self! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -702,16 +699,6 @@ balance
 	^ managedAccounts inject: 0 into: [ :result :current | result + (current balance)] ! !
 
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 21:01:19'!
-accept:aPortfolioVisitor
-
-	aPortfolioVisitor visitPortofolio: self.! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'A.G. 10/24/2018 23:59:33'!
-accept:aPortfolioVisitor at:aDepth
-
-	aPortfolioVisitor visitPortofolio: self at:aDepth.! !
-
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 15:28:34'!
 accept:aPortfolioVisitor with:aCollaborator
 
@@ -812,6 +799,19 @@ transactionsDo:aBlock
 
 	transactions do: aBlock! !
 
+!ReceptiveAccount methodsFor: 'transactions' stamp: 'LB 10/18/2018 19:59:49'!
+transfer: anAmount to: destination
+
+	|depositLeg withdrawLeg transfer|
+
+	transfer _ Transfer with:anAmount .
+	withdrawLeg := transfer withdrawLeg .
+	depositLeg := transfer depositLeg ..
+	 self register: withdrawLeg .
+	destination register: depositLeg .
+	
+	^ transfer ! !
+
 
 !ReceptiveAccount methodsFor: 'testing' stamp: 'HAW 10/11/2018 16:53:28'!
 doesManage: anAccount
@@ -837,25 +837,6 @@ balance
 
 	^ transactions inject: 0 into: [ :result :current | result + (current balance)] ! !
 
-
-!ReceptiveAccount methodsFor: '*Aconcagua-Extensions' stamp: 'LB 10/18/2018 19:59:49'!
-transfer: anAmount to: destination
-
-	|depositLeg withdrawLeg transfer|
-
-	transfer _ Transfer with:anAmount .
-	withdrawLeg := transfer withdrawLeg .
-	depositLeg := transfer depositLeg ..
-	 self register: withdrawLeg .
-	destination register: depositLeg .
-	
-	^ transfer ! !
-
-
-!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'das 10/22/2018 21:01:42'!
-accept:aVisitor
-
-	aVisitor visitReceptiveAcount: self .! !
 
 !ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'A.G. 10/25/2018 00:00:44'!
 accept:aVisitor with:aCollaborator
