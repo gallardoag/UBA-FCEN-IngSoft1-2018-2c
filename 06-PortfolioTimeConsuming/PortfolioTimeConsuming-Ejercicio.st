@@ -11,16 +11,17 @@ initializeFor: aReceptiveAccount
 	account := aReceptiveAccount ! !
 
 
-!AccountSummaryWithAllInvestmentInformation methodsFor: 'evaluating' stamp: 'HernanWilkinson 7/17/2011 23:58'!
+!AccountSummaryWithAllInvestmentInformation methodsFor: 'evaluating' stamp: 'A.G. 11/1/2018 15:50:36'!
 lines 
 
 	| lines investmentEarnings |
 	
-	investmentEarnings := InvestmentNetVisitor for: account.
-	lines := (AccountSummaryWithInvestmentEarnings for: account) lines.
-	lines add: 'Inversiones por ', investmentEarnings value printString.
+	investmentEarnings := ForkingProxy from: [(InvestmentNetVisitor for: account) value].
+	lines := ForkingProxy from: [(AccountSummaryWithInvestmentEarnings for: account) lines].
 	
-	 ^ lines! !
+	(lines value) add: 'Inversiones por ', (investmentEarnings value) printString.
+	
+	 ^ (lines value)! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -47,16 +48,18 @@ initializeFor: aReceptiveAccount
 	account := aReceptiveAccount ! !
 
 
-!AccountSummaryWithInvestmentEarnings methodsFor: 'evaluating' stamp: 'HernanWilkinson 7/17/2011 23:53'!
+!AccountSummaryWithInvestmentEarnings methodsFor: 'evaluating' stamp: 'A.G. 11/1/2018 15:48:40'!
 lines 
 
 	| lines investmentEarnings |
 	
-	investmentEarnings := InvestmentEarningVisitor for: account.
-	lines := (AccountSummary for: account) lines.
-	lines add: 'Ganancias por ', investmentEarnings value printString.
+	investmentEarnings := ForkingProxy from: [(InvestmentEarningVisitor for: account) value].
 	
-	 ^ lines! !
+	lines := ForkingProxy from: [(AccountSummary for: account) lines]. 
+	
+	(lines value) add: 'Ganancias por ', (investmentEarnings value) printString.
+	
+	 ^ lines value! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -586,7 +589,7 @@ visitTransferWithdraw: aTransferWithdraw      ! !
 visitWithdraw: aWithdraw  ! !
 
 
-!InvestmentEarningVisitor methodsFor: 'evaluating' stamp: 'HernanWilkinson 7/18/2011 00:00'!
+!InvestmentEarningVisitor methodsFor: 'evaluating' stamp: 'A.G. 10/31/2018 18:14:36'!
 value
 
 	(Delay forSeconds: 1) wait.
@@ -643,7 +646,7 @@ visitWithdraw: aWithdraw
 	! !
 
 
-!InvestmentNetVisitor methodsFor: 'evaluating' stamp: 'HernanWilkinson 7/18/2011 00:00'!
+!InvestmentNetVisitor methodsFor: 'evaluating' stamp: 'A.G. 10/31/2018 18:15:01'!
 value
 
 	(Delay forSeconds: 1) wait.
@@ -670,6 +673,39 @@ InvestmentNetVisitor class
 for: aReceptiveAccount 
 	
 	^ self new initializeFor: aReceptiveAccount ! !
+
+
+!classDefinition: #ForkingProxy category: #'PortfolioTimeConsuming-Ejercicio'!
+Object subclass: #ForkingProxy
+	instanceVariableNames: 'value semaphore'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'PortfolioTimeConsuming-Ejercicio'!
+
+!ForkingProxy methodsFor: 'initialization' stamp: 'A.G. 10/31/2018 21:08:59'!
+withValueFrom: aBlock
+
+	semaphore _ Semaphore new.
+	[value := (aBlock value). semaphore signal.] fork! !
+
+
+!ForkingProxy methodsFor: 'evaluation' stamp: 'A.G. 11/1/2018 15:52:07'!
+value
+
+	semaphore wait.
+	semaphore signal.
+	^value! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'ForkingProxy class' category: #'PortfolioTimeConsuming-Ejercicio'!
+ForkingProxy class
+	instanceVariableNames: ''!
+
+!ForkingProxy class methodsFor: 'as yet unclassified' stamp: 'A.G. 10/31/2018 21:04:55'!
+from: aBlock
+
+	^ForkingProxy new withValueFrom: aBlock ! !
 
 
 !classDefinition: #ReversePortfolioTreePrinter category: #'PortfolioTimeConsuming-Ejercicio'!
