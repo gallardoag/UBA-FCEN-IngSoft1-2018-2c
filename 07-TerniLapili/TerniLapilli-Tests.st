@@ -15,18 +15,8 @@ test01_newGameIsEmpty
 	self deny: game hasAWinner .
 	! !
 
-!TerniLapilliTesting methodsFor: 'Testing' stamp: 'A.G. 11/5/2018 19:34:12'!
-test02_puttingAPieceIncreasesTotalPieces
-
-	| game |
-	game := TerniLapili new.
-	
-	game addPiece: (2@2).
-		
-	self assert: (game totalPieces = 1).! !
-
-!TerniLapilliTesting methodsFor: 'Testing' stamp: 'A.G. 11/5/2018 19:38:56'!
-test03_aPiecePutAtAPointIsAtThatPoint
+!TerniLapilliTesting methodsFor: 'Testing' stamp: 'das 11/6/2018 18:23:06'!
+test02_aPiecePutAtAPointIsAtThatPoint
 
 	| game |
 	game := TerniLapili new.
@@ -35,6 +25,19 @@ test03_aPiecePutAtAPointIsAtThatPoint
 	
 	self assert: (game hasAPieceAt: 2@2).
 	self assert: game totalPieces equals: 1.
+! !
+
+!TerniLapilliTesting methodsFor: 'Testing' stamp: 'das 11/6/2018 18:23:46'!
+test03_addingPiecesIncreasesTotalPieces
+
+	| game |
+	game := TerniLapili new.
+	
+	game addPiece: 2@2.
+	game addPiece: 2@3.
+	
+
+	self assert: game totalPieces equals: 2.
 ! !
 
 !TerniLapilliTesting methodsFor: 'Testing' stamp: 'A.G. 11/5/2018 19:42:39'!
@@ -49,7 +52,7 @@ test04_canNotPlacePieceInAnAlreadyOccuppiedPosition
 		self assert: anError messageText equals: TerniLapili superposicionDeFichasErrorDescription].
 	! !
 
-!TerniLapilliTesting methodsFor: 'Testing' stamp: 'A.G. 11/5/2018 20:53:44'!
+!TerniLapilliTesting methodsFor: 'Testing' stamp: 'das 11/6/2018 18:34:14'!
 test05_canNotAddMoreThan6Pieces
 
 	| game pieces|

@@ -1,18 +1,135 @@
-!classDefinition: #TerniLapili category: #'TerniLapilli-Ejercicio'!
-Object subclass: #TerniLapili
-	instanceVariableNames: 'tablero proximoJugador'
+!classDefinition: #PosicionesTablero category: #'TerniLapilli-Ejercicio'!
+Object subclass: #PosicionesTablero
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/6/2018 16:21:47'!
+!PosicionesTablero methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:19:19'!
+contabilizar
+
+	^ self subclassResponsibility ! !
+
+
+!classDefinition: #Blanco category: #'TerniLapilli-Ejercicio'!
+PosicionesTablero subclass: #Blanco
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!Blanco methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:18:54'!
+contabilizar
+
+	^1! !
+
+!Blanco methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:50:54'!
+explodeIfBlack
+! !
+
+!Blanco methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:44:58'!
+explodeIfEmpty
+! !
+
+!Blanco methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:27:04'!
+explodeIfOccupied
+
+	^ self error:TerniLapili superposicionDeFichasErrorDescription! !
+
+!Blanco methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:49:06'!
+explodeIfWhite
+
+	^self error: TerniLapili turnoEquivocadoErrorDescription ! !
+
+
+!classDefinition: #Negro category: #'TerniLapilli-Ejercicio'!
+PosicionesTablero subclass: #Negro
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!Negro methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:19:01'!
+contabilizar
+	^ 1! !
+
+!Negro methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:50:59'!
+explodeIfBlack
+
+	^self error: TerniLapili turnoEquivocadoErrorDescription ! !
+
+!Negro methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:45:07'!
+explodeIfEmpty! !
+
+!Negro methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:27:26'!
+explodeIfOccupied
+
+	^ self error:TerniLapili superposicionDeFichasErrorDescription! !
+
+!Negro methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:49:20'!
+explodeIfWhite! !
+
+
+!classDefinition: #Vacio category: #'TerniLapilli-Ejercicio'!
+PosicionesTablero subclass: #Vacio
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!Vacio methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:19:12'!
+contabilizar
+
+^0! !
+
+!Vacio methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:51:05'!
+explodeIfBlack! !
+
+!Vacio methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:43:59'!
+explodeIfEmpty
+
+	^self error.
+
+	! !
+
+!Vacio methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:18:55'!
+explodeIfOccupied
+
+	! !
+
+!Vacio methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:49:24'!
+explodeIfWhite! !
+
+
+!classDefinition: #TerniLapili category: #'TerniLapilli-Ejercicio'!
+Object subclass: #TerniLapili
+	instanceVariableNames: 'tablero state'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:38:42'!
+addBlackPieceAt:aPosition
+
+	(tablero at: aPosition) explodeIfOccupied .
+	
+	tablero at: aPosition put: Negro new.
+	
+	state _ state nextFor: self.! !
+
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:59:17'!
 addPiece: aPoint 
 
-	self hasAWinner ifTrue: [^self error: self class gameOverErrorDescription].
-	(tablero at:aPoint) ifNotNil: [^self error: self class superposicionDeFichasErrorDescription ].
-	(self totalPieces = 6) ifTrue: [^self error: self class cantidadDeFichasIgualesErrorDescription ].
-	tablero at: aPoint put: proximoJugador color.
-	self changePlayer.! !
+	state addPiece: aPoint in: self! !
+
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:38:59'!
+addWhitePieceAt:aPosition
+
+	(tablero at: aPosition) explodeIfOccupied .
+	
+	tablero at: aPosition put: Blanco new.
+	
+	state _ state nextFor:self.! !
 
 !TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 20:12:35'!
 changePlayer
@@ -24,74 +141,68 @@ hasAPieceAt: aPoint
 	
 	^(tablero at:aPoint) isNil not! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 21:47:13'!
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:12:37'!
 hasAWinner
-	
-	#(1 2 3) do: [:a | (((tablero at: a@1) = (tablero at: a@2) and: (tablero at: a@1) = (tablero at: a@3)) 
-		and: (((tablero at: a@1) isNil) not)) 
-		ifTrue: [^true] ].
-	#(1 2 3) do: [:a | (((tablero at: 1@a) = (tablero at: 2@a) and: (tablero at: 1@a) = (tablero at: 3@a)) 
-		and: (((tablero at: 1@a) isNil) not)) 
-		ifTrue: [^true] ].
-	(((tablero at: 1@1) = (tablero at: 2@2) and: (tablero at: 1@1) = (tablero at: 3@3)) 
-		and: (((tablero at: 1@1) isNil) not)) 
-		ifTrue: [^true].
-	(((tablero at: 1@3) = (tablero at: 2@2) and: (tablero at: 1@3) = (tablero at: 3@1)) 
-		and: (((tablero at: 1@3) isNil) not)) 
-		ifTrue: [^true].
-	^false! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 20:12:53'!
+	^ state hasWinner .! !
+
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:53:36'!
 initialize
 
 	tablero _ Array2D width: 3 height: 3.
-	proximoJugador := Color black .! !
+	tablero replaceValues: [:i :j : previous | Vacio new].
+	state _ PuttingPieceStateBlack new.! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/6/2018 16:22:17'!
-movePieceFrom: aPoint to: aPoint2 
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:57:18'!
+moveBlackPieceFrom: aPoint to: anotherPoint
 
-	self hasAWinner ifTrue: [self error: self class gameOverErrorDescription].
-	(self totalPieces = 6) ifFalse: [^self error: self class cantidadDeFichasMenorA6ErrorDescription ].
-	(aPoint eightNeighbors includes: aPoint2) ifFalse: [^self error: self class distanceIsGreaterThanOne ].
-	(aPoint2 between: 1@1 and: 3@3) ifFalse: [^self error: self class outOfBoundsErrorDescription ].
-	(tablero at:aPoint2) ifNotNil: [^self error: self class superposicionDeFichasErrorDescription ].
-	((tablero at:aPoint) = proximoJugador) ifFalse: [^self error: self class turnoEquivocadoErrorDescription ].
-	tablero at: aPoint put: nil.
-	self addPiece: aPoint2.! !
+	(tablero at: aPoint) explodeIfEmpty.
+	(tablero at: anotherPoint) explodeIfOccupied.
+	(tablero at: aPoint) explodeIfWhite.
+	
+	tablero at: aPoint put: Vacio new.
+	tablero at: aPoint put: Negro new.
+	
+	state _ state nextFor: self.! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 20:31:31'!
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:43:24'!
+movePieceFrom: aPoint to: anotherPoint
+
+	state movePieceFrom: aPoint to: anotherPoint in: self! !
+
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:57:28'!
+moveWhitePieceFrom: aPoint to: anotherPoint
+
+	(tablero at: aPoint) explodeIfEmpty.
+	(tablero at: anotherPoint) explodeIfOccupied.
+	(tablero at: aPoint) explodeIfBlack.
+	
+	tablero at: aPoint put: Vacio new.
+	tablero at: aPoint put: Blanco new.
+	
+	state _ state nextFor: self.! !
+
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 19:00:22'!
 nextPlayer
 	
-	^proximoJugador ! !
+	^ state player ! !
 
 !TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 20:32:25'!
 pieceAt: aPoint 
 	
 	^tablero at: aPoint ! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 19:33:07'!
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:24:18'!
 totalPieces
 	|result |
 	result := 0 .
-	tablero do:[:anElement| anElement ifNotNil:[result := result +1] ].
+	tablero do:[:anElement| result := result + anElement contabilizar . result].
 	^result .! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/6/2018 16:15:38'!
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:52:59'!
 winner
-	|winner|
-	#(1 2 3) do: [:a | (((tablero at: a@1) = (tablero at: a@2) and: (tablero at: a@1) = (tablero at: a@3)) 
-		and: (((tablero at: a@1) isNil) not)) 
-		ifTrue: [winner := tablero at: a@1. ^winner] ].
-	#(1 2 3) do: [:a | (((tablero at: 1@a) = (tablero at: 2@a) and: (tablero at: 1@a) = (tablero at: 3@a)) 
-		and: (((tablero at: 1@a) isNil) not)) 
-		ifTrue: [winner := tablero at: 1@a. ^winner] ].
-	(((tablero at: 1@1) = (tablero at: 2@2) and: (tablero at: 1@1) = (tablero at: 3@3)) 
-		and: (((tablero at: 1@1) isNil) not)) 
-		ifTrue: [winner := tablero at: 2@2. ^winner].
-	(((tablero at: 1@3) = (tablero at: 2@2) and: (tablero at: 1@3) = (tablero at: 3@1)) 
-		and: (((tablero at: 1@3) isNil) not)) 
-		ifTrue: [winner := tablero at: 2@2. ^winner].
-	^nil! !
+
+	^ state winner! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -132,3 +243,217 @@ superposicionDeFichasErrorDescription
 turnoEquivocadoErrorDescription
 
 ^'el mismo jugador no puede jugar dos veces seguidas '! !
+
+
+!classDefinition: #TerniLapiliState category: #'TerniLapilli-Ejercicio'!
+Object subclass: #TerniLapiliState
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!TerniLapiliState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:06:54'!
+hasWinner
+
+	^ self subclassResponsibility .! !
+
+!TerniLapiliState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:07:34'!
+movePieceFrom:aPosition to:anotherPosition
+
+	^ self subclassResponsibility .! !
+
+!TerniLapiliState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:07:57'!
+putPieceAt:aPosition
+
+	^ self subclassResponsibility .! !
+
+!TerniLapiliState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:07:09'!
+winner
+
+	^ self subclassResponsibility .! !
+
+
+!classDefinition: #GameFinishedState category: #'TerniLapilli-Ejercicio'!
+TerniLapiliState subclass: #GameFinishedState
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!GameFinishedState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:41:27'!
+addPiece: aPoint in:aGame
+
+	^ self error: TerniLapili cantidadDeFichasIgualesErrorDescription ! !
+
+!GameFinishedState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:03:48'!
+hasWinner
+
+	^ true! !
+
+
+!classDefinition: #GameFinishedStateBlackWon category: #'TerniLapilli-Ejercicio'!
+GameFinishedState subclass: #GameFinishedStateBlackWon
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!GameFinishedStateBlackWon methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:54:47'!
+player
+
+	^ Negro new! !
+
+
+!classDefinition: #GameFinishedStateWhiteWon category: #'TerniLapilli-Ejercicio'!
+GameFinishedState subclass: #GameFinishedStateWhiteWon
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!GameFinishedStateWhiteWon methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:54:32'!
+player
+
+	^ Blanco new! !
+
+
+!classDefinition: #MovingPiecesState category: #'TerniLapilli-Ejercicio'!
+TerniLapiliState subclass: #MovingPiecesState
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!MovingPiecesState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:41:10'!
+addPiece: aPoint in:aGame
+
+	^ self error: TerniLapili cantidadDeFichasIgualesErrorDescription ! !
+
+!MovingPiecesState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:03:56'!
+hasWinner
+	^ false! !
+
+
+!classDefinition: #MovingPiecesStateBlack category: #'TerniLapilli-Ejercicio'!
+MovingPiecesState subclass: #MovingPiecesStateBlack
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!MovingPiecesStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:46:18'!
+movePieceFrom: aPoint to: anotherPoint in: aGame
+
+	aGame moveBlackPieceFrom: aPoint to: anotherPoint.! !
+
+!MovingPiecesStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:55:48'!
+nextFor:aGame
+
+	^ MovingPiecesStateWhite new! !
+
+!MovingPiecesStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:54:40'!
+player
+
+	^ Negro new! !
+
+
+!classDefinition: #MovingPiecesStateWhite category: #'TerniLapilli-Ejercicio'!
+MovingPiecesState subclass: #MovingPiecesStateWhite
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!MovingPiecesStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:46:33'!
+movePieceFrom: aPoint to: anotherPoint in: aGame
+
+	aGame moveWhitePieceFrom: aPoint to: anotherPoint.! !
+
+!MovingPiecesStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:56:09'!
+nextFor:aGame
+
+	^MovingPiecesStateBlack new! !
+
+!MovingPiecesStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:54:24'!
+player
+
+	^ Blanco new! !
+
+
+!classDefinition: #PuttingPieceState category: #'TerniLapilli-Ejercicio'!
+TerniLapiliState subclass: #PuttingPieceState
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!PuttingPieceState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:54:12'!
+addPiece: aPoint 
+
+	^ self subclassResponsibility ! !
+
+!PuttingPieceState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:04:03'!
+hasWinner
+
+	^ false! !
+
+!PuttingPieceState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:14:26'!
+next
+
+	^  self subclassResponsibility ! !
+
+
+!classDefinition: #PuttingPieceStateBlack category: #'TerniLapilli-Ejercicio'!
+PuttingPieceState subclass: #PuttingPieceStateBlack
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!PuttingPieceStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:07:35'!
+addPiece:aPosition in:aTerniLapili
+
+	aTerniLapili addBlackPieceAt: aPosition! !
+
+!PuttingPieceStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:14:50'!
+next
+
+	^ PuttingPieceStateWhite new.! !
+
+!PuttingPieceStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:31:13'!
+nextFor:aGame
+
+	^ (aGame totalPieces =6) ifTrue: [^ MovingPiecesStateWhite new] ifFalse:[^PuttingPieceStateWhite new] ! !
+
+!PuttingPieceStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:53:38'!
+player
+
+	^Negro new! !
+
+
+!classDefinition: #PuttingPieceStateWhite category: #'TerniLapilli-Ejercicio'!
+PuttingPieceState subclass: #PuttingPieceStateWhite
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli-Ejercicio'!
+
+!PuttingPieceStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:24:48'!
+addPiece:aPosition in:aTerniLapili
+
+	aTerniLapili addWhitePieceAt: aPosition! !
+
+!PuttingPieceStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:25:45'!
+next
+
+	^ PuttingPieceStateBlack new.! !
+
+!PuttingPieceStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:36:51'!
+nextFor:aGame
+
+	^ (aGame totalPieces =6) ifTrue: [^ MovingPiecesStateBlack new] ifFalse:[^PuttingPieceStateBlack new] ! !
+
+!PuttingPieceStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:54:11'!
+player
+
+^Blanco new! !
