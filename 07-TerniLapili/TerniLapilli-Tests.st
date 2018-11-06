@@ -179,6 +179,29 @@ test14_diagonalLinesWinTheGame
 	game addPiece: 3@3.
 	self assert: game hasAWinner.! !
 
+!TerniLapilliTesting methodsFor: 'Testing' stamp: 'A.G. 11/6/2018 16:16:58'!
+test15_canTellWhoTheWinnerIs
+
+	| game pieces|
+	pieces := (OrderedCollection new) add: 1@1; add:1@2; add:2@2; add: 2@1; yourself .
+	game := TerniLapili new.
+	self addPieces:pieces to:game .
+	game addPiece: 3@3.
+	self assert: game winner equals: Color black.! !
+
+!TerniLapilliTesting methodsFor: 'Testing' stamp: 'A.G. 11/6/2018 16:20:40'!
+test16_cannotMoveWhenTheGameIsFinished
+
+	| game pieces|
+	pieces := (OrderedCollection new) add: 1@1; add:1@2; add:2@2; add: 2@1; yourself .
+	game := TerniLapili new.
+	self addPieces:pieces to:game .
+	game addPiece: 3@3.
+	self assert: game winner equals: Color black.
+	self should: [game addPiece: 2@3] 
+	raise: Error 
+	withExceptionDo: [:anError | self assert: anError messageText equals: TerniLapili gameOverErrorDescription]! !
+
 
 !TerniLapilliTesting methodsFor: 'test-support' stamp: 'A.G. 11/5/2018 19:45:11'!
 addPieces:aCollectionOfPieces to: aGame

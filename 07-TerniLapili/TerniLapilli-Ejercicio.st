@@ -5,9 +5,10 @@ Object subclass: #TerniLapili
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 20:12:35'!
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/6/2018 16:21:47'!
 addPiece: aPoint 
 
+	self hasAWinner ifTrue: [^self error: self class gameOverErrorDescription].
 	(tablero at:aPoint) ifNotNil: [^self error: self class superposicionDeFichasErrorDescription ].
 	(self totalPieces = 6) ifTrue: [^self error: self class cantidadDeFichasIgualesErrorDescription ].
 	tablero at: aPoint put: proximoJugador color.
@@ -46,9 +47,10 @@ initialize
 	tablero _ Array2D width: 3 height: 3.
 	proximoJugador := Color black .! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 20:57:40'!
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/6/2018 16:22:17'!
 movePieceFrom: aPoint to: aPoint2 
 
+	self hasAWinner ifTrue: [self error: self class gameOverErrorDescription].
 	(self totalPieces = 6) ifFalse: [^self error: self class cantidadDeFichasMenorA6ErrorDescription ].
 	(aPoint eightNeighbors includes: aPoint2) ifFalse: [^self error: self class distanceIsGreaterThanOne ].
 	(aPoint2 between: 1@1 and: 3@3) ifFalse: [^self error: self class outOfBoundsErrorDescription ].
@@ -74,10 +76,22 @@ totalPieces
 	tablero do:[:anElement| anElement ifNotNil:[result := result +1] ].
 	^result .! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 21:20:40'!
+!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/6/2018 16:15:38'!
 winner
-	
-	^Color black! !
+	|winner|
+	#(1 2 3) do: [:a | (((tablero at: a@1) = (tablero at: a@2) and: (tablero at: a@1) = (tablero at: a@3)) 
+		and: (((tablero at: a@1) isNil) not)) 
+		ifTrue: [winner := tablero at: a@1. ^winner] ].
+	#(1 2 3) do: [:a | (((tablero at: 1@a) = (tablero at: 2@a) and: (tablero at: 1@a) = (tablero at: 3@a)) 
+		and: (((tablero at: 1@a) isNil) not)) 
+		ifTrue: [winner := tablero at: 1@a. ^winner] ].
+	(((tablero at: 1@1) = (tablero at: 2@2) and: (tablero at: 1@1) = (tablero at: 3@3)) 
+		and: (((tablero at: 1@1) isNil) not)) 
+		ifTrue: [winner := tablero at: 2@2. ^winner].
+	(((tablero at: 1@3) = (tablero at: 2@2) and: (tablero at: 1@3) = (tablero at: 3@1)) 
+		and: (((tablero at: 1@3) isNil) not)) 
+		ifTrue: [winner := tablero at: 2@2. ^winner].
+	^nil! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -98,6 +112,11 @@ cantidadDeFichasMenorA6ErrorDescription
 !TerniLapili class methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 20:39:09'!
 distanceIsGreaterThanOne
 	'The distance is more than 1 ' ! !
+
+!TerniLapili class methodsFor: 'as yet unclassified' stamp: 'A.G. 11/6/2018 16:22:49'!
+gameOverErrorDescription
+	
+	^'No se pueden mover más piezas una vez que el juego ya terminó'! !
 
 !TerniLapili class methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 20:46:13'!
 outOfBoundsErrorDescription
