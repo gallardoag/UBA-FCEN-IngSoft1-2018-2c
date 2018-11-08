@@ -366,23 +366,25 @@ Object subclass: #TerniLapiliState
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!TerniLapiliState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:06:54'!
+!TerniLapiliState methodsFor: 'game-checking' stamp: 'das 11/6/2018 17:06:54'!
 hasWinner
 
 	^ self subclassResponsibility .! !
 
-!TerniLapiliState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:07:34'!
+!TerniLapiliState methodsFor: 'game-checking' stamp: 'das 11/6/2018 17:07:09'!
+winner
+
+	^ self subclassResponsibility .! !
+
+
+!TerniLapiliState methodsFor: 'game-moving' stamp: 'das 11/6/2018 17:07:34'!
 movePieceFrom:aPosition to:anotherPosition
 
 	^ self subclassResponsibility .! !
 
-!TerniLapiliState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:07:57'!
+
+!TerniLapiliState methodsFor: 'game-adding' stamp: 'das 11/6/2018 17:07:57'!
 putPieceAt:aPosition
-
-	^ self subclassResponsibility .! !
-
-!TerniLapiliState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:07:09'!
-winner
 
 	^ self subclassResponsibility .! !
 
@@ -394,17 +396,23 @@ TerniLapiliState subclass: #GameFinishedState
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!GameFinishedState methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 17:37:54'!
-addPiece: aPoint in:aGame
-
-	^ self error: TerniLapili gameOverErrorDescription ! !
-
-!GameFinishedState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:03:48'!
+!GameFinishedState methodsFor: 'game-checking' stamp: 'das 11/6/2018 17:03:48'!
 hasWinner
 
 	^ true! !
 
-!GameFinishedState methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 17:47:30'!
+!GameFinishedState methodsFor: 'game-checking' stamp: 'das 11/8/2018 16:13:01'!
+player
+
+	^ self subclassResponsibility ! !
+
+
+!GameFinishedState methodsFor: 'invalid-actions' stamp: 'A.G. 11/7/2018 17:37:54'!
+addPiece: aPoint in:aGame
+
+	^ self error: TerniLapili gameOverErrorDescription ! !
+
+!GameFinishedState methodsFor: 'invalid-actions' stamp: 'A.G. 11/7/2018 17:47:30'!
 movePieceFrom: aPoint to: anotherPoint in: aGame
 
 	^self error: TerniLapili gameOverErrorDescription ! !
@@ -417,12 +425,12 @@ GameFinishedState subclass: #GameFinishedStateBlackWon
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!GameFinishedStateBlackWon methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:54:47'!
+!GameFinishedStateBlackWon methodsFor: 'game-checking' stamp: 'das 11/6/2018 18:54:47'!
 player
 
 	^ Negro new! !
 
-!GameFinishedStateBlackWon methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 17:35:18'!
+!GameFinishedStateBlackWon methodsFor: 'game-checking' stamp: 'A.G. 11/7/2018 17:35:18'!
 winner
 
 	^Negro new! !
@@ -435,12 +443,12 @@ GameFinishedState subclass: #GameFinishedStateWhiteWon
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!GameFinishedStateWhiteWon methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:54:32'!
+!GameFinishedStateWhiteWon methodsFor: 'game-checking' stamp: 'das 11/6/2018 18:54:32'!
 player
 
 	^ Blanco new! !
 
-!GameFinishedStateWhiteWon methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 17:35:06'!
+!GameFinishedStateWhiteWon methodsFor: 'game-checking' stamp: 'A.G. 11/7/2018 17:35:06'!
 winner
 
 	^Blanco new! !
@@ -453,14 +461,32 @@ TerniLapiliState subclass: #MovingPiecesState
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!MovingPiecesState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:41:10'!
+!MovingPiecesState methodsFor: 'game-checking' stamp: 'das 11/6/2018 17:03:56'!
+hasWinner
+	^ false! !
+
+
+!MovingPiecesState methodsFor: 'game-adding' stamp: 'das 11/6/2018 18:41:10'!
 addPiece: aPoint in:aGame
 
 	^ self error: TerniLapili cantidadDeFichasIgualesErrorDescription ! !
 
-!MovingPiecesState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:03:56'!
-hasWinner
-	^ false! !
+
+!MovingPiecesState methodsFor: 'game-moving' stamp: 'das 11/8/2018 16:16:41'!
+movePieceFrom: aPoint to: anotherPoint in: aGame
+
+	^ self subclassResponsibility ! !
+
+!MovingPiecesState methodsFor: 'game-moving' stamp: 'das 11/8/2018 16:17:47'!
+nextFor:aGame
+
+	^ self subclassResponsibility ! !
+
+
+!MovingPiecesState methodsFor: 'game-player' stamp: 'das 11/8/2018 16:17:19'!
+player
+
+	^ self subclassResponsibility ! !
 
 
 !classDefinition: #MovingPiecesStateBlack category: #'TerniLapilli-Ejercicio'!
@@ -470,17 +496,18 @@ MovingPiecesState subclass: #MovingPiecesStateBlack
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!MovingPiecesStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:46:18'!
+!MovingPiecesStateBlack methodsFor: 'game-moving' stamp: 'das 11/6/2018 18:46:18'!
 movePieceFrom: aPoint to: anotherPoint in: aGame
 
 	aGame moveBlackPieceFrom: aPoint to: anotherPoint.! !
 
-!MovingPiecesStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:55:48'!
+!MovingPiecesStateBlack methodsFor: 'game-moving' stamp: 'das 11/6/2018 18:55:48'!
 nextFor:aGame
 
 	^ MovingPiecesStateWhite new! !
 
-!MovingPiecesStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:54:40'!
+
+!MovingPiecesStateBlack methodsFor: 'game-player' stamp: 'das 11/6/2018 18:54:40'!
 player
 
 	^ Negro new! !
@@ -493,17 +520,18 @@ MovingPiecesState subclass: #MovingPiecesStateWhite
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!MovingPiecesStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:46:33'!
+!MovingPiecesStateWhite methodsFor: 'game-moving' stamp: 'das 11/6/2018 18:46:33'!
 movePieceFrom: aPoint to: anotherPoint in: aGame
 
 	aGame moveWhitePieceFrom: aPoint to: anotherPoint.! !
 
-!MovingPiecesStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:56:09'!
+!MovingPiecesStateWhite methodsFor: 'game-moving' stamp: 'das 11/6/2018 18:56:09'!
 nextFor:aGame
 
 	^MovingPiecesStateBlack new! !
 
-!MovingPiecesStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:54:24'!
+
+!MovingPiecesStateWhite methodsFor: 'game-player' stamp: 'das 11/6/2018 18:54:24'!
 player
 
 	^ Blanco new! !
