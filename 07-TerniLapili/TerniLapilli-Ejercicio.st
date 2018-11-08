@@ -150,45 +150,46 @@ PosicionesTablero subclass: #Vacio
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!Vacio methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:19:12'!
+!Vacio methodsFor: 'testing' stamp: 'das 11/6/2018 17:19:12'!
 contabilizar
 
 ^0! !
 
-!Vacio methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:51:05'!
+!Vacio methodsFor: 'testing' stamp: 'das 11/6/2018 18:51:05'!
 explodeIfBlack! !
 
-!Vacio methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:43:59'!
+!Vacio methodsFor: 'testing' stamp: 'das 11/6/2018 18:43:59'!
 explodeIfEmpty
 
 	^self error.
 
 	! !
 
-!Vacio methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:18:55'!
+!Vacio methodsFor: 'testing' stamp: 'das 11/6/2018 18:18:55'!
 explodeIfOccupied
 
 	! !
 
-!Vacio methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:49:24'!
+!Vacio methodsFor: 'testing' stamp: 'das 11/6/2018 18:49:24'!
 explodeIfWhite! !
 
-!Vacio methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 16:07:52'!
+
+!Vacio methodsFor: 'comparing' stamp: 'A.G. 11/7/2018 16:07:52'!
 isBlack
 
 	^false! !
 
-!Vacio methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 16:06:10'!
+!Vacio methodsFor: 'comparing' stamp: 'A.G. 11/7/2018 16:06:10'!
 isEmpty
 
 	^true! !
 
-!Vacio methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 16:07:57'!
+!Vacio methodsFor: 'comparing' stamp: 'A.G. 11/7/2018 16:07:57'!
 isWhite
 
 	^false! !
 
-!Vacio methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 16:09:16'!
+!Vacio methodsFor: 'comparing' stamp: 'A.G. 11/7/2018 16:09:16'!
 sameColourAs: aColour
 	
 	^aColour isEmpty! !
@@ -201,7 +202,7 @@ Object subclass: #TerniLapili
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:38:42'!
+!TerniLapili methodsFor: 'pieces-adding' stamp: 'das 11/6/2018 18:38:42'!
 addBlackPieceAt:aPosition
 
 	(tablero at: aPosition) explodeIfOccupied .
@@ -210,14 +211,14 @@ addBlackPieceAt:aPosition
 	
 	state _ state nextFor: self.! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 16:44:17'!
+!TerniLapili methodsFor: 'pieces-adding' stamp: 'A.G. 11/7/2018 16:44:17'!
 addPiece: aPoint 
 
 	(aPoint between: 1@1 and: 3@3 )ifFalse: [^self error: self class outOfBoundsErrorDescription ].
 	state addPiece: aPoint in: self.
 	self checkForAWinner.! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:38:59'!
+!TerniLapili methodsFor: 'pieces-adding' stamp: 'das 11/6/2018 18:38:59'!
 addWhitePieceAt:aPosition
 
 	(tablero at: aPosition) explodeIfOccupied .
@@ -226,40 +227,8 @@ addWhitePieceAt:aPosition
 	
 	state _ state nextFor:self.! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 17:29:32'!
-checkForAWinner
 
-#(1 2 3) do: [:a | (self checkWinningLine: (OrderedCollection with: a@1 with: a@2 with: a@3)) ifTrue: [^state := (tablero at: a@1) declareWinner] ].
-
-#(1 2 3) do: [:a | (self checkWinningLine:  (OrderedCollection with: 1@a with: 2@a with: 3@a)) ifTrue: [^state := (tablero at: 1@a) declareWinner] ]. 
-
-(self checkWinningLine: (OrderedCollection with: 1@1 with: 2@2 with: 3@3)) ifTrue: [state := (tablero at: 1@1) declareWinner]. 
- 
-(self checkWinningLine: (OrderedCollection with: 1@3 with: 2@2 with: 3@1)) ifTrue: [state := (tablero at: 1@3) declareWinner]. ! !
-
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 17:28:25'!
-checkWinningLine:aPointCollection
-
-	^aPointCollection allSatisfy: [:aPoint | ((tablero at: aPoint) sameColourAs: (tablero at:(aPointCollection first))) and: ((tablero at: aPoint) isEmpty) not].! !
-
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 16:05:47'!
-hasAPieceAt: aPoint 
-	
-	^(tablero at: aPoint) isEmpty not! !
-
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:12:37'!
-hasAWinner
-
-	^ state hasWinner .! !
-
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:53:36'!
-initialize
-
-	tablero _ Array2D width: 3 height: 3.
-	tablero replaceValues: [:i :j : previous | Vacio new].
-	state _ PuttingPieceStateBlack new.! !
-
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 17:52:03'!
+!TerniLapili methodsFor: 'pieces-moving' stamp: 'A.G. 11/7/2018 17:52:03'!
 moveBlackPieceFrom: aPoint to: anotherPoint
 
 	(tablero at: aPoint) explodeIfEmpty.
@@ -271,7 +240,7 @@ moveBlackPieceFrom: aPoint to: anotherPoint
 	
 	state _ state nextFor: self.! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 18:00:02'!
+!TerniLapili methodsFor: 'pieces-moving' stamp: 'A.G. 11/7/2018 18:00:02'!
 movePieceFrom: aPoint to: anotherPoint
 
 	((aPoint eightNeighbors includes: anotherPoint) or: (aPoint = anotherPoint ))ifFalse: [^self error: self class distanceIsGreaterThanOne ].
@@ -279,7 +248,7 @@ movePieceFrom: aPoint to: anotherPoint
 	state movePieceFrom: aPoint to: anotherPoint in: self.
 	self checkForAWinner.! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 17:53:23'!
+!TerniLapili methodsFor: 'pieces-moving' stamp: 'A.G. 11/7/2018 17:53:23'!
 moveWhitePieceFrom: aPoint to: anotherPoint
 
 	(tablero at: aPoint) explodeIfEmpty.
@@ -291,27 +260,63 @@ moveWhitePieceFrom: aPoint to: anotherPoint
 	
 	state _ state nextFor: self.! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 19:00:22'!
-nextPlayer
-	
-	^ state player ! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'A.G. 11/5/2018 20:32:25'!
+!TerniLapili methodsFor: 'pieces-checking' stamp: 'A.G. 11/7/2018 17:28:25'!
+checkWinningLine:aPointCollection
+
+	^aPointCollection allSatisfy: [:aPoint | ((tablero at: aPoint) sameColourAs: (tablero at:(aPointCollection first))) and: ((tablero at: aPoint) isEmpty) not].! !
+
+!TerniLapili methodsFor: 'pieces-checking' stamp: 'A.G. 11/7/2018 16:05:47'!
+hasAPieceAt: aPoint 
+	
+	^(tablero at: aPoint) isEmpty not! !
+
+!TerniLapili methodsFor: 'pieces-checking' stamp: 'A.G. 11/5/2018 20:32:25'!
 pieceAt: aPoint 
 	
 	^tablero at: aPoint ! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:24:18'!
+!TerniLapili methodsFor: 'pieces-checking' stamp: 'das 11/6/2018 17:24:18'!
 totalPieces
 	|result |
 	result := 0 .
 	tablero do:[:anElement| result := result + anElement contabilizar . result].
 	^result .! !
 
-!TerniLapili methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:52:59'!
+
+!TerniLapili methodsFor: 'game-checking' stamp: 'A.G. 11/7/2018 17:29:32'!
+checkForAWinner
+
+#(1 2 3) do: [:a | (self checkWinningLine: (OrderedCollection with: a@1 with: a@2 with: a@3)) ifTrue: [^state := (tablero at: a@1) declareWinner] ].
+
+#(1 2 3) do: [:a | (self checkWinningLine:  (OrderedCollection with: 1@a with: 2@a with: 3@a)) ifTrue: [^state := (tablero at: 1@a) declareWinner] ]. 
+
+(self checkWinningLine: (OrderedCollection with: 1@1 with: 2@2 with: 3@3)) ifTrue: [state := (tablero at: 1@1) declareWinner]. 
+ 
+(self checkWinningLine: (OrderedCollection with: 1@3 with: 2@2 with: 3@1)) ifTrue: [state := (tablero at: 1@3) declareWinner]. ! !
+
+!TerniLapili methodsFor: 'game-checking' stamp: 'das 11/6/2018 17:12:37'!
+hasAWinner
+
+	^ state hasWinner .! !
+
+!TerniLapili methodsFor: 'game-checking' stamp: 'das 11/6/2018 19:00:22'!
+nextPlayer
+	
+	^ state player ! !
+
+!TerniLapili methodsFor: 'game-checking' stamp: 'das 11/6/2018 17:52:59'!
 winner
 
 	^ state winner! !
+
+
+!TerniLapili methodsFor: 'initialization' stamp: 'das 11/6/2018 17:53:36'!
+initialize
+
+	tablero _ Array2D width: 3 height: 3.
+	tablero replaceValues: [:i :j : previous | Vacio new].
+	state _ PuttingPieceStateBlack new.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
