@@ -511,20 +511,25 @@ TerniLapiliState subclass: #PuttingPieceState
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!PuttingPieceState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:54:12'!
+!PuttingPieceState methodsFor: 'gaming protocol' stamp: 'das 11/6/2018 17:54:12'!
 addPiece: aPoint 
 
 	^ self subclassResponsibility ! !
 
-!PuttingPieceState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 17:04:03'!
+!PuttingPieceState methodsFor: 'gaming protocol' stamp: 'das 11/6/2018 17:04:03'!
 hasWinner
 
 	^ false! !
 
-!PuttingPieceState methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:14:26'!
-next
+!PuttingPieceState methodsFor: 'gaming protocol' stamp: 'das 11/8/2018 15:59:47'!
+movePieceFrom: aPoint to: anotherPoint in: aGame
 
-	^  self subclassResponsibility ! !
+	^self error: TerniLapili cantidadDeFichasMenorA6ErrorDescription ! !
+
+!PuttingPieceState methodsFor: 'gaming protocol' stamp: 'das 11/8/2018 15:58:51'!
+nextFor:aGame
+
+	^ self subclassResponsibility ! !
 
 
 !classDefinition: #PuttingPieceStateBlack category: #'TerniLapilli-Ejercicio'!
@@ -534,27 +539,17 @@ PuttingPieceState subclass: #PuttingPieceStateBlack
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!PuttingPieceStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:07:35'!
+!PuttingPieceStateBlack methodsFor: 'gaming protocol' stamp: 'das 11/6/2018 18:07:35'!
 addPiece:aPosition in:aTerniLapili
 
 	aTerniLapili addBlackPieceAt: aPosition! !
 
-!PuttingPieceStateBlack methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 17:32:03'!
-movePieceFrom: aPoint to: anotherPoint in: aGame
-
-	^self error: TerniLapili cantidadDeFichasMenorA6ErrorDescription ! !
-
-!PuttingPieceStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:14:50'!
-next
-
-	^ PuttingPieceStateWhite new.! !
-
-!PuttingPieceStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:31:13'!
+!PuttingPieceStateBlack methodsFor: 'gaming protocol' stamp: 'das 11/6/2018 18:31:13'!
 nextFor:aGame
 
 	^ (aGame totalPieces =6) ifTrue: [^ MovingPiecesStateWhite new] ifFalse:[^PuttingPieceStateWhite new] ! !
 
-!PuttingPieceStateBlack methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:53:38'!
+!PuttingPieceStateBlack methodsFor: 'gaming protocol' stamp: 'das 11/6/2018 18:53:38'!
 player
 
 	^Negro new! !
@@ -567,27 +562,17 @@ PuttingPieceState subclass: #PuttingPieceStateWhite
 	poolDictionaries: ''
 	category: 'TerniLapilli-Ejercicio'!
 
-!PuttingPieceStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:24:48'!
+!PuttingPieceStateWhite methodsFor: 'gaming protocol' stamp: 'das 11/6/2018 18:24:48'!
 addPiece:aPosition in:aTerniLapili
 
 	aTerniLapili addWhitePieceAt: aPosition! !
 
-!PuttingPieceStateWhite methodsFor: 'as yet unclassified' stamp: 'A.G. 11/7/2018 17:32:12'!
-movePieceFrom: aPoint to: anotherPoint in: aGame
-
-	^self error: TerniLapili cantidadDeFichasMenorA6ErrorDescription ! !
-
-!PuttingPieceStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:25:45'!
-next
-
-	^ PuttingPieceStateBlack new.! !
-
-!PuttingPieceStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:36:51'!
+!PuttingPieceStateWhite methodsFor: 'gaming protocol' stamp: 'das 11/6/2018 18:36:51'!
 nextFor:aGame
 
 	^ (aGame totalPieces =6) ifTrue: [^ MovingPiecesStateBlack new] ifFalse:[^PuttingPieceStateBlack new] ! !
 
-!PuttingPieceStateWhite methodsFor: 'as yet unclassified' stamp: 'das 11/6/2018 18:54:11'!
+!PuttingPieceStateWhite methodsFor: 'gaming protocol' stamp: 'das 11/6/2018 18:54:11'!
 player
 
 ^Blanco new! !
