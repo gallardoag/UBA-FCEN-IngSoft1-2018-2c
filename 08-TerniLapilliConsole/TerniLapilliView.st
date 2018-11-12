@@ -152,37 +152,24 @@ lines
 	lines add:state.
 	^ lines! !
 
-!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'LE 11/12/2018 16:32:19'!
+!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'LE 11/12/2018 16:57:32'!
 logPlay: aTerniLapiliPlay
 
-	| startingPoint destinationPoint xIndex oIndex |
+	| xIndex oIndex |
 
 	xIndex _ aTerniLapiliPlay indexOf: $X ifAbsent: [xIndex _ 0. oIndex _ aTerniLapiliPlay indexOf: $O ifAbsent: [0] ].
 	
-	(xIndex = 22) ifTrue: [startingPoint _ (aTerniLapiliPlay copyFrom: 27 to: 29).
-		self placeXIn: startingPoint. ].
-	(xIndex = 18) ifTrue: [startingPoint _ (aTerniLapiliPlay copyFrom: 34 to: 36).
-		destinationPoint _ (aTerniLapiliPlay copyFrom: 25 to: 27).
-		self slideXFrom: startingPoint to: destinationPoint].
+	(xIndex = 22) ifTrue: [self putXAsIn: aTerniLapiliPlay ].
+	(xIndex = 18) ifTrue: [self slideXAsIn: aTerniLapiliPlay ].
 	
 	
-	(oIndex = 22) ifTrue: [startingPoint _ (aTerniLapiliPlay copyFrom: 27 to: 29).
-		self placeOIn: startingPoint. ].
-	(oIndex = 18) ifTrue: [startingPoint _ (aTerniLapiliPlay copyFrom: 34 to: 36).
-		destinationPoint _ (aTerniLapiliPlay copyFrom: 25 to: 27).
-		self slideOFrom: startingPoint to: destinationPoint].! !
+	(oIndex = 22) ifTrue: [self putOAsIn: aTerniLapiliPlay ].
+	(oIndex = 18) ifTrue: [self slideOAsIn: aTerniLapiliPlay ].! !
 
-!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'A.G. 11/10/2018 22:13:01'!
+!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'LE 11/12/2018 16:42:58'!
 logState: aTerniLapiliState 
 	
-	| stateString |
-
-	((aTerniLapiliState isKindOf: PlacingX) or: (aTerniLapiliState isKindOf: SlidingX) ) ifTrue: [stateString  _ 'Playing X'].
-	((aTerniLapiliState isKindOf: PlacingO) or: (aTerniLapiliState isKindOf: SlidingO) ) ifTrue: [stateString  _ 'Playing O'].
-	(aTerniLapiliState isKindOf: WinningX ) ifTrue: [stateString  _ 'X Won!!'].
-	(aTerniLapiliState isKindOf: WinningO) ifTrue: [stateString  _ 'O Won!!'].
-		
-	state _ stateString.! !
+	aTerniLapiliState accept:self.! !
 
 !TerniLapilliBoardView methodsFor: 'accessing' stamp: 'A.G. 11/10/2018 22:11:32'!
 placeOIn:aPoint
@@ -194,11 +181,43 @@ placeXIn:aPoint
 
 	tablero at: aPoint put: 'X'! !
 
+!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'LE 11/12/2018 17:00:50'!
+putOAsIn:aString
+
+	| startingPoint |
+	startingPoint _ (aString copyFrom: 27 to: 29).
+	self placeOIn: (startingPoint at:1 numericValue ) @ (startingPoint at:3 numericValue )   .! !
+
+!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'LE 11/12/2018 17:00:56'!
+putXAsIn:aString
+
+	| startingPoint |
+	startingPoint _ (aString copyFrom: 27 to: 29).
+	self placeXIn: (startingPoint at:1  ) numericValue @ (startingPoint at:3  ) numericValue  .! !
+
+!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'LE 11/12/2018 17:01:06'!
+slideOAsIn:aString
+
+	| startingPoint destinationPoint |
+	
+	startingPoint _ (aString copyFrom: 34 to: 36).
+		destinationPoint _ (aString copyFrom: 25 to: 27).
+		self slideOFrom: (startingPoint at:1 numericValue )@ (startingPoint at:3 numericValue ) to: (destinationPoint at:1 numericValue ) @ (destinationPoint at:3 numericValue )! !
+
 !TerniLapilliBoardView methodsFor: 'accessing' stamp: 'A.G. 11/10/2018 22:10:48'!
 slideOFrom: aPoint to: anotherPoint
 
 	tablero at: aPoint put: ' '.
 	tablero at: anotherPoint put: 'O'.! !
+
+!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'LE 11/12/2018 17:01:14'!
+slideXAsIn:aString
+
+	| startingPoint destinationPoint |
+	
+	startingPoint _ (aString copyFrom: 34 to: 36).
+		destinationPoint _ (aString copyFrom: 25 to: 27).
+		self slideXFrom: (startingPoint at:1 numericValue )@ (startingPoint at:3 numericValue ) to: (destinationPoint at:1 numericValue ) @ (destinationPoint at:3 numericValue )! !
 
 !TerniLapilliBoardView methodsFor: 'accessing' stamp: 'A.G. 11/10/2018 22:10:40'!
 slideXFrom: aPoint to: anotherPoint
@@ -220,6 +239,35 @@ notify
 	
 	self logPlay: game lastPlay.
 	self logState: game state.! !
+
+
+!TerniLapilliBoardView methodsFor: 'visiting' stamp: 'LE 11/12/2018 16:47:18'!
+visitPlacingO
+
+	state _ 'Playing O'! !
+
+!TerniLapilliBoardView methodsFor: 'visiting' stamp: 'LE 11/12/2018 16:47:08'!
+visitPlacingX
+
+	state _ 'Playing X'! !
+
+!TerniLapilliBoardView methodsFor: 'visiting' stamp: 'LE 11/12/2018 16:47:29'!
+visitSlidingO
+
+	state _ 'Playing O'! !
+
+!TerniLapilliBoardView methodsFor: 'visiting' stamp: 'LE 11/12/2018 16:47:01'!
+visitSlidingX
+
+	state _ 'Playing X'! !
+
+!TerniLapilliBoardView methodsFor: 'visiting' stamp: 'LE 11/12/2018 16:48:04'!
+visitWinningO
+	state _ 'O Won!!'! !
+
+!TerniLapilliBoardView methodsFor: 'visiting' stamp: 'LE 11/12/2018 16:48:07'!
+visitWinningX
+	state _ 'X Won!!'! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -280,27 +328,27 @@ logState: aTerniLapiliState
 	aTerniLapiliState accept:self.! !
 
 
-!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:24:58'!
+!TerniLapilliConsoleLog methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:24:58'!
 visitPlacingO
 	lines add:'Estado: Jugando O'.! !
 
-!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:24:08'!
+!TerniLapilliConsoleLog methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:24:08'!
 visitPlacingX
 	lines add:'Estado: Jugando X'.! !
 
-!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:30:46'!
+!TerniLapilliConsoleLog methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:30:46'!
 visitSlidingO
 	lines add:'Estado: Jugando O'! !
 
-!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:30:28'!
+!TerniLapilliConsoleLog methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:30:28'!
 visitSlidingX
 	lines add:'Estado: Jugando X'! !
 
-!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:29:48'!
+!TerniLapilliConsoleLog methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:29:48'!
 visitWinningO
 	lines add:'Estado: Juego terminado - ¡Ganó O!!'! !
 
-!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:29:09'!
+!TerniLapilliConsoleLog methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:29:09'!
 visitWinningX
 	lines add: 'Estado: Juego terminado - ¡Ganó X!!'! !
 
