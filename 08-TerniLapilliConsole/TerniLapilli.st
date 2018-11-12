@@ -1408,6 +1408,10 @@ GameOverState subclass: #WinningO
 	poolDictionaries: ''
 	category: 'TerniLapilli'!
 
+!WinningO methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:29:36'!
+accept: aVisitor 
+	aVisitor visitWinningO! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'WinningO class' category: #TerniLapilli!
@@ -1426,6 +1430,10 @@ GameOverState subclass: #WinningX
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerniLapilli'!
+
+!WinningX methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:28:38'!
+accept: aVisitor 
+	aVisitor visitWinningX! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1456,6 +1464,11 @@ isPlayingO
 slideXFrom: aPosition to: anotherPostion
 
 	game slideXWhenPlayingOFrom: aPosition to: anotherPostion .! !
+
+
+!PlayingO methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:26:35'!
+accept: aVisitor 
+	^ self subclassResponsibility .! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1491,6 +1504,11 @@ putXAt: aPosition
 slideOFrom: aPosition to: anotherPostion
 
 	game slideOWhenPlacingOFrom: aPosition to: anotherPostion .! !
+
+
+!PlacingO methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:26:00'!
+accept: aVisitor 
+	aVisitor visitPlacingO.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1533,6 +1551,11 @@ areAllXsOnTheBoard
 	
 	^true! !
 
+
+!SlidingO methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:26:10'!
+accept: aVisitor 
+	aVisitor visitSlidingO.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'SlidingO class' category: #TerniLapilli!
@@ -1562,6 +1585,11 @@ isPlayingX
 slideOFrom: aPosition to: anotherPostion
  
 	game slideOWhenPlayingXFrom: aPosition to: anotherPostion .! !
+
+
+!PlayingX methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:27:21'!
+accept: aVisitor 
+	^ self subclassResponsibility ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1603,6 +1631,12 @@ slideXFrom: aPosition to: anotherPostion
 isPlacingX
 
 	^true! !
+
+
+!PlacingX methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:27:33'!
+accept:aVisitor
+
+	aVisitor visitPlacingX! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1650,6 +1684,12 @@ areAllXsOnTheBoard
 isSlidingX
 
 	^true! !
+
+
+!SlidingX methodsFor: 'visiting' stamp: 'LE 11/12/2018 15:27:48'!
+accept:aVisitor
+
+	aVisitor visitSlidingX.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 

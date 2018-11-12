@@ -5,14 +5,36 @@ TestCase subclass: #TerniLapilliBoardViewTest
 	poolDictionaries: ''
 	category: 'TerniLapilliView'!
 
-!TerniLapilliBoardViewTest methodsFor: 'testing' stamp: 'A.G. 11/10/2018 22:16:12'!
+!TerniLapilliBoardViewTest methodsFor: 'testing' stamp: 'LE 11/12/2018 16:24:41'!
 test01_ANewBoardIsEmpty
 
 	| board game |
 	game _ TerniLapilli new.
 	board _ TerniLapilliBoardView for: game.
 	
-	self assert: 5 equals: board lines size.! !
+	self assert: 6 equals: board lines size.
+	self assert: ' | | ' equals: (board lines at:1).
+	self assert: '-----' equals: (board lines at:2).
+	self assert: ' | | ' equals: (board lines at:3).
+	self assert: '-----' equals: (board lines at:4).
+	self assert: ' | | ' equals: (board lines at:5).
+	self assert:'Estado Jugando: X' equals: (board lines at:6)! !
+
+!TerniLapilliBoardViewTest methodsFor: 'testing' stamp: 'LE 11/12/2018 16:31:58'!
+test02_WhenXPutsAPieceApiecesAppearsOnBoard
+
+	| board game |
+	game _ TerniLapilli new.
+	board _ TerniLapilliBoardView for: game.
+	game register: board.
+	game putXAt: 2@2.
+	self assert: 6 equals: board lines size.
+	self assert: ' | | ' equals: (board lines at:1).
+	self assert: '-----' equals: (board lines at:2).
+	self assert: ' |X| ' equals: (board lines at:3).
+	self assert: '-----' equals: (board lines at:4).
+	self assert: ' | | ' equals: (board lines at:5).
+	self assert:'Estado Jugando: O' equals: (board lines at:6)! !
 
 
 !classDefinition: #TerniLapilliConsoleLogTest category: #TerniLapilliView!
@@ -112,12 +134,25 @@ Object subclass: #TerniLapilliBoardView
 	poolDictionaries: ''
 	category: 'TerniLapilliView'!
 
-!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'A.G. 11/10/2018 22:18:26'!
+!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'LE 11/12/2018 16:23:17'!
 lines
+|lines line|
 
-	^tablero print! !
+	lines := OrderedCollection new.
+	1 to: 3 do: [ :i |
+		line := String new.
+		1 to: 3 do: [ :j |
+			line := line , (tablero at: (i@j)).
+			line := line , '|'.].
+		line := line allButLast .
+		lines add: line.	
+		lines add: '-----'.
+	].
+	lines removeLast.
+	lines add:state.
+	^ lines! !
 
-!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'A.G. 11/10/2018 22:09:45'!
+!TerniLapilliBoardView methodsFor: 'accessing' stamp: 'LE 11/12/2018 16:32:19'!
 logPlay: aTerniLapiliPlay
 
 	| startingPoint destinationPoint xIndex oIndex |
@@ -172,14 +207,15 @@ slideXFrom: aPoint to: anotherPoint
 	tablero at: anotherPoint put: 'X'.! !
 
 
-!TerniLapilliBoardView methodsFor: 'initialization' stamp: 'A.G. 11/10/2018 22:29:36'!
+!TerniLapilliBoardView methodsFor: 'initialization' stamp: 'LE 11/12/2018 16:23:39'!
 initializeWith: aTerniLapilli 
 	game _ aTerniLapilli .
-	tablero _ Array2D copyFrom: #($ ,$ ,$ ).
-	state _ ''.! !
+	tablero _ Array2D width: 3 height:3. 
+	tablero replaceValues: [:i :j : previous | ' '].
+	state _ 'Estado Jugando: X'! !
 
 
-!TerniLapilliBoardView methodsFor: 'observing' stamp: 'A.G. 11/10/2018 21:52:01'!
+!TerniLapilliBoardView methodsFor: 'observing' stamp: 'LE 11/12/2018 16:32:09'!
 notify
 	
 	self logPlay: game lastPlay.
@@ -238,17 +274,35 @@ logPlay: aTerniLapiliPlay
 	
 	lines add: playString.! !
 
-!TerniLapilliConsoleLog methodsFor: 'logging' stamp: 'A.G. 11/10/2018 21:19:37'!
+!TerniLapilliConsoleLog methodsFor: 'logging' stamp: 'LE 11/12/2018 15:20:32'!
 logState: aTerniLapiliState 
 	
-	| stateString |
+	aTerniLapiliState accept:self.! !
 
-	((aTerniLapiliState isKindOf: PlacingX) or: (aTerniLapiliState isKindOf: SlidingX) ) ifTrue: [stateString  _ 'Estado: Jugando X'].
-	((aTerniLapiliState isKindOf: PlacingO) or: (aTerniLapiliState isKindOf: SlidingO) ) ifTrue: [stateString  _ 'Estado: Jugando O'].
-	(aTerniLapiliState isKindOf: WinningX ) ifTrue: [stateString  _ 'Estado: Juego terminado - ¡Ganó X!!'].
-	(aTerniLapiliState isKindOf: WinningO) ifTrue: [stateString  _ 'Estado: Juego terminado - ¡Ganó O!!'].
-		
-	lines add: stateString.! !
+
+!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:24:58'!
+visitPlacingO
+	lines add:'Estado: Jugando O'.! !
+
+!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:24:08'!
+visitPlacingX
+	lines add:'Estado: Jugando X'.! !
+
+!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:30:46'!
+visitSlidingO
+	lines add:'Estado: Jugando O'! !
+
+!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:30:28'!
+visitSlidingX
+	lines add:'Estado: Jugando X'! !
+
+!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:29:48'!
+visitWinningO
+	lines add:'Estado: Juego terminado - ¡Ganó O!!'! !
+
+!TerniLapilliConsoleLog methodsFor: 'as yet unclassified' stamp: 'LE 11/12/2018 15:29:09'!
+visitWinningX
+	lines add: 'Estado: Juego terminado - ¡Ganó X!!'! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
