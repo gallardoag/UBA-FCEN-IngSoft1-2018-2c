@@ -5,7 +5,7 @@ TestCase subclass: #CartTest
 	poolDictionaries: ''
 	category: 'TusLibros-Iteracion1'!
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:37:05'!
+!CartTest methodsFor: 'Testing' stamp: 'das 11/12/2018 20:37:05'!
 test01_newCartIsEmpty
 
 	|cart catalog | 
@@ -14,7 +14,7 @@ test01_newCartIsEmpty
 	
 	self assert: cart isEmpty ! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:37:47'!
+!CartTest methodsFor: 'Testing' stamp: 'das 11/12/2018 20:37:47'!
 test02_addedItemAppearsOnCart
 
 	|cart anISBN catalog |
@@ -26,27 +26,27 @@ test02_addedItemAppearsOnCart
 	self assert: (cart isitemInCart:anISBN) .
 	self assert: 1 equals: (cart howManyOf:anISBN )! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:38:10'!
+!CartTest methodsFor: 'Testing' stamp: 'LE 11/15/2018 14:28:56'!
 test03_cannotAddAItem0Times
 
 	|cart anISBN catalog |
 	anISBN _ '9780068689'.
 	catalog _ OrderedCollection with: anISBN .
 	cart _ Cart with:catalog .
-	self should: [cart addItem: anISBN times:0 ] raise:Error  withExceptionDo: [:anError | anError messageText =Cart cannotAddAItem0Times.
+	self should: [cart addItem: anISBN times:0 ] raise:Error  withExceptionDo: [:anError | anError messageText =Cart invalidQuantityErrorMessage .
 		self assert: cart isEmpty ]! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:38:33'!
+!CartTest methodsFor: 'Testing' stamp: 'LE 11/15/2018 14:29:26'!
 test03_cannotAddAItemANotIntegerTime
 
 	|cart anISBN catalog |
 	anISBN _ '9780068689'.
 	catalog _ OrderedCollection with: anISBN .
 	cart _ Cart with: catalog.
-	self should: [cart addItem: anISBN times:3.14 ] raise:Error  withExceptionDo: [:anError | anError messageText =Cart cannotAddAnItemANonIntengerTimes.
+	self should: [cart addItem: anISBN times:3.14 ] raise:Error  withExceptionDo: [:anError | anError messageText =Cart invalidQuantityErrorMessage .
 		self assert: cart isEmpty ]! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:39:23'!
+!CartTest methodsFor: 'Testing' stamp: 'LE 11/15/2018 14:29:18'!
 test04_cannotAddAnItemNotPresentInCatalog
 
 	|cart anISBN anotherISBN catalog |
@@ -54,10 +54,10 @@ test04_cannotAddAnItemNotPresentInCatalog
 	anotherISBN _ '9780068690'.
 	catalog := OrderedCollection with: anotherISBN .
 	cart _ Cart with: catalog.
-	self should: [cart addItem: anISBN times:3 ] raise:Error  withExceptionDo: [:anError | anError messageText =Cart cannotAddAnItemNotPresentInCatalog.
+	self should: [cart addItem: anISBN times:3 ] raise:Error  withExceptionDo: [:anError | anError messageText =Cart invalidQuantityErrorMessage .
 		self assert: cart isEmpty ]! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:51:31'!
+!CartTest methodsFor: 'Testing' stamp: 'das 11/12/2018 20:51:31'!
 test05_cartContentCanBeKnown
 
 	|cart anISBN anotherISBN catalog |
@@ -80,42 +80,42 @@ Object subclass: #Cart
 	poolDictionaries: ''
 	category: 'TusLibros-Iteracion1'!
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:35:42'!
-addItem: anISBN times: aNumber 
-
-	(aNumber > 0) ifFalse: [^self error: self class cannotAddAItem0Times ].
-	(aNumber isKindOf: Integer ) ifFalse: [^self error: self class cannotAddAnItemANonIntengerTimes ].
-	(catalog includes: anISBN ) ifFalse: [^self error: self class cannotAddAnItemNotPresentInCatalog ].
-	items add: anISBN withOccurrences: aNumber .! !
-
-!Cart methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:55:51'!
-content
-
-	^ items copy. ! !
-
-!Cart methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:07:14'!
+!Cart methodsFor: 'assertions' stamp: 'LE 11/15/2018 13:31:33'!
 howManyOf: anISBNNumber 
-	self assert: (self isitemInCart:anISBNNumber )..
-	^ items occurrencesOf: anISBNNumber ! !
+	
+	^ items occurrencesOf: anISBNNumber 
+	! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:01:16'!
-initialize
-
-	items _ Bag new.! !
-
-!Cart methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:29:34'!
-initializeWith:aCatalog
-
-	catalog _ aCatalog! !
-
-!Cart methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:01:26'!
+!Cart methodsFor: 'assertions' stamp: 'das 11/12/2018 20:01:26'!
 isEmpty
 	^ items isEmpty ! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:04:54'!
+!Cart methodsFor: 'assertions' stamp: 'das 11/12/2018 20:04:54'!
 isitemInCart:anISBN
 
 	^ items includes: anISBN ! !
+
+
+!Cart methodsFor: 'initialization' stamp: 'LE 11/15/2018 13:34:54'!
+initializeWith:aCatalog
+
+	items _ Bag new.
+	catalog _ aCatalog! !
+
+
+!Cart methodsFor: 'adding' stamp: 'LE 11/15/2018 14:28:24'!
+addItem: anISBN times: aNumber 
+
+	((aNumber isKindOf: Integer ) and: [aNumber > 0])
+	ifFalse: [^self error: self class invalidQuantityErrorMessage ].
+	(catalog includes: anISBN ) ifFalse: [^self error: self class invalidItemErrorMessage ].
+	items add: anISBN withOccurrences: aNumber .! !
+
+
+!Cart methodsFor: 'accessing' stamp: 'das 11/12/2018 20:55:51'!
+content
+
+	^ items copy. ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -123,22 +123,18 @@ isitemInCart:anISBN
 Cart class
 	instanceVariableNames: ''!
 
-!Cart class methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:10:03'!
-cannotAddAItem0Times
-	
-		^ ' Please enter a positive Integer'! !
-
-!Cart class methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:14:23'!
-cannotAddAnItemANonIntengerTimes
-
-	^ ' Please Enter a Positive Intenger'.! !
-
-!Cart class methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:34:48'!
-cannotAddAnItemNotPresentInCatalog
-	
-		^ ' Item not present in the product catalog'! !
-
-!Cart class methodsFor: 'as yet unclassified' stamp: 'das 11/12/2018 20:28:40'!
+!Cart class methodsFor: 'instance creation' stamp: 'LE 11/15/2018 13:34:03'!
 with:aCatalog
 
 	^ self new initializeWith: aCatalog ! !
+
+
+!Cart class methodsFor: 'error messages' stamp: 'LE 11/15/2018 14:25:04'!
+invalidItemErrorMessage
+	
+		^ ' Item not present in the product catalog'! !
+
+!Cart class methodsFor: 'error messages' stamp: 'LE 11/15/2018 14:24:54'!
+invalidQuantityErrorMessage
+
+		^ ' Please enter a positive Integer'! !
