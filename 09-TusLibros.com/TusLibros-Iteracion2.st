@@ -80,7 +80,7 @@ TestCase subclass: #CashierTest
 	poolDictionaries: ''
 	category: 'TusLibros-Iteracion2'!
 
-!CashierTest methodsFor: 'Testing' stamp: 'LE 11/21/2018 23:28:42'!
+!CashierTest methodsFor: 'Testing' stamp: 'Luis 11/22/2018 15:57:38'!
 test01_cannotCheckOutAnEmptyCart
 	
 	| card cart cashier |
@@ -92,25 +92,9 @@ test01_cannotCheckOutAnEmptyCart
 	self should: [cashier checkOut: cart with: card] 
 	raise: Error 
 	withExceptionDo: [:anError | anError messageText = Cashier emptyCartCheckOutMessage].
-	self assert: cashier salesBook isEmpty .
 	self assert: (cashier totalSold) equals: 0.! !
 
-!CashierTest methodsFor: 'Testing' stamp: 'A.G. 11/15/2018 20:06:29'!
-test02_aCartWithASingleItemCanCheckOut
-	
-	| card cart cashier total priceList |
-	cart := Cart with: self defaultCatalog.
-	priceList := self defaultPriceList.
-	cashier := self createValidCashier.
-	card := self createValidCard.
-	
-	cart addItem: 'ISBN001' times: 1.
-	total := priceList at: 'ISBN001'.
-	
-	self assert: (cashier checkOut: cart with: card) equals: total.
-	self assert: cashier totalSold equals: total.! !
-
-!CashierTest methodsFor: 'Testing' stamp: 'A.G. 11/15/2018 20:19:17'!
+!CashierTest methodsFor: 'Testing' stamp: 'Luis 11/22/2018 16:09:17'!
 test03_aCartWithMultipleItemsCanCheckOut
 	
 	| card cart cashier total priceList |
@@ -123,11 +107,10 @@ test03_aCartWithMultipleItemsCanCheckOut
 	cart addItem: 'ISBN002' times: 1.
 	
 	total := (priceList at: 'ISBN001') * 2 + (priceList at: 'ISBN002').
-	
-	self assert: (cashier checkOut: cart with: card) equals: total.
+	cashier checkOut: cart with: card.
 	self assert: cashier totalSold equals: total.! !
 
-!CashierTest methodsFor: 'Testing' stamp: 'A.G. 11/15/2018 20:19:31'!
+!CashierTest methodsFor: 'Testing' stamp: 'Luis 11/22/2018 15:16:42'!
 test04_cannotCheckoutWithanExpiredCreditCard
 	
 	| card cart cashier |
@@ -140,23 +123,43 @@ test04_cannotCheckoutWithanExpiredCreditCard
 	
 	
 	
-	self should: [cashier checkOut: cart with: card] raise:Error  withExceptionDo: [:anError | anError messageText = Cashier expiredCardErrorMessage]! !
+	self should: [cashier checkOut: cart with: card] raise:Error  withExceptionDo: [:anError | anError messageText = Cashier expiredCardErrorMessage.
+		self assert: 0 equals:cashier totalSold 
+		]! !
 
-!CashierTest methodsFor: 'Testing' stamp: 'LE 11/21/2018 23:37:35'!
-test05_salesAreRegisteredOnSalesBook
-		
-	| card cart cashier total priceList |
+!CashierTest methodsFor: 'Testing' stamp: 'Luis 11/22/2018 15:58:05'!
+test05_whenMerchantProcesorChargesACustomerCashierRecordsTheSale
+	
+	| card cart cashier  total priceList |
+	priceList := self defaultPriceList .
 	cart := Cart with: self defaultCatalog.
-	priceList := self defaultPriceList.
 	cashier := self createValidCashier.
 	card := self createValidCard.
 	
 	cart addItem: 'ISBN001' times: 2.
 	cart addItem: 'ISBN002' times: 1.
 	
-	total := (priceList at: 'ISBN001') * 2 + (priceList at: 'ISBN002').
 	cashier checkOut: cart with: card.
+	
+	total := (priceList at: 'ISBN001') * 2 + (priceList at: 'ISBN002').
+	
+	self assert: total equals: cashier totalSold.! !
 
+!CashierTest methodsFor: 'Testing' stamp: 'Luis 11/22/2018 16:21:06'!
+test06_whenMerchantProcesorCannotChargeTheCustomerTheSaleIsNotDone
+	
+	| card cart cashier  |
+
+	cart := Cart with: self defaultCatalog.
+	cashier := self createValidCashierWith: (MerchantProcessorMock with:['400 1|Credit card has not enough funds']).
+	card:= self createValidCard.
+	
+	cart addItem: 'ISBN001' times: 2.
+	cart addItem: 'ISBN002' times: 1.
+	
+     self should:[cashier checkOut: cart with: card.]  raise:Error   withExceptionDo: [:anError | anError messageText = 'Credit card has not enough funds'.
+		self assert:  0 equals:cashier totalSold .
+		]
 	! !
 
 
@@ -178,12 +181,19 @@ createValidCard
 	
 	^Card name: 'Cosme Fulanito' number: 0001 from: from thru: to ccv: 999.! !
 
-!CashierTest methodsFor: 'Testing-Support' stamp: 'LE 11/21/2018 23:17:38'!
+!CashierTest methodsFor: 'Testing-Support' stamp: 'Luis 11/22/2018 15:59:33'!
 createValidCashier
+
+	| merchantProcessor |
+	merchantProcessor := MerchantProcessorMock with: ['200 0|OK'].
+	^self createValidCashierWith: merchantProcessor .! !
+
+!CashierTest methodsFor: 'Testing-Support' stamp: 'Luis 11/22/2018 15:53:12'!
+createValidCashierWith: aMerchantProcessor
 
 	| priceList |
 	priceList := self defaultPriceList.
-	^Cashier withPriceList: priceList registeringOn: OrderedCollection new.! !
+	^Cashier withPriceList: priceList and: aMerchantProcessor .! !
 
 !CashierTest methodsFor: 'Testing-Support' stamp: 'A.G. 11/15/2018 18:46:58'!
 defaultCatalog
@@ -222,10 +232,25 @@ withHolder: holderName withNumber: cardNumber from:fromDate thru: thruDate ccv: 
 	ccv _ ccvNumber.! !
 
 
+!Card methodsFor: 'evaluating' stamp: 'Luis 11/22/2018 15:34:55'!
+holder
+
+	^holder! !
+
 !Card methodsFor: 'evaluating' stamp: 'A.G. 11/15/2018 21:01:19'!
 isExpired
 
 	^thru < GregorianMonthOfYear current.! !
+
+!Card methodsFor: 'evaluating' stamp: 'Luis 11/22/2018 15:35:06'!
+number
+
+	^number ! !
+
+!Card methodsFor: 'evaluating' stamp: 'Luis 11/22/2018 15:35:18'!
+thru
+
+	^thru ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -327,39 +352,43 @@ invalidQuantityErrorMessage
 
 !classDefinition: #Cashier category: #'TusLibros-Iteracion2'!
 Object subclass: #Cashier
-	instanceVariableNames: 'priceList totalSold salesBook'
+	instanceVariableNames: 'priceList totalSold salesBook merchantProcessor'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Iteracion2'!
 
-!Cashier methodsFor: 'check-out' stamp: 'A.G. 11/15/2018 21:08:24'!
+!Cashier methodsFor: 'check-out' stamp: 'Luis 11/22/2018 15:47:07'!
 checkOut: aCart with: aCard 
-	|sold|
+	|value response |
 	(aCart isEmpty) ifTrue: [self error: self class emptyCartCheckOutMessage].
 	(aCard isExpired) ifTrue: [self error: self class expiredCardErrorMessage].
-	sold _ aCart sumarizeWIth: priceList.
-	totalSold _ totalSold + sold.
-	^sold.! !
+	value _ aCart sumarizeWIth: priceList.
+	
+	response _ merchantProcessor charge: value to: aCard holder with: aCard number withExpiration: aCard thru.
+	
+	self verify: response.
+	
+	totalSold _ totalSold + value.
+	
+	^value.! !
+
+!Cashier methodsFor: 'check-out' stamp: 'Luis 11/22/2018 16:20:22'!
+verify: aResponseString 
+
+	(aResponseString beginsWith: '400' ) ifTrue: [^self error: (aResponseString withoutPrefix: '400 1|')]! !
 
 
-!Cashier methodsFor: 'initialization' stamp: 'LE 11/21/2018 23:31:02'!
-initializeWithPriceList:aPriceList on:aSalesbook
-
+!Cashier methodsFor: 'initialization' stamp: 'Luis 11/22/2018 15:54:50'!
+initializeWithPriceList:aPriceList  and: aMerchantProcessor 
 	priceList _ aPriceList .
 	totalSold _ 0.
-	salesBook _ aSalesbook ! !
+	merchantProcessor _ aMerchantProcessor ! !
 
 
 !Cashier methodsFor: 'evaluating' stamp: 'A.G. 11/15/2018 20:22:04'!
 totalSold
 
 	^totalSold! !
-
-
-!Cashier methodsFor: 'accessing' stamp: 'LE 11/21/2018 23:27:04'!
-salesBook
-
-	^ salesBook copy ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -378,44 +407,44 @@ expiredCardErrorMessage
 	^'Credit card is expired'.! !
 
 
+!Cashier class methodsFor: 'initialization' stamp: 'Luis 11/22/2018 15:54:18'!
+withPriceList: aPriceList and: aMerchantProcessor .
+
+	^self new initializeWithPriceList:aPriceList  and: aMerchantProcessor ! !
+
 !Cashier class methodsFor: 'initialization' stamp: 'LE 11/21/2018 23:31:31'!
 withPriceList:aPriceList registeringOn: aSalesBook 
 
 	^self new initializeWithPriceList:aPriceList  on: aSalesBook ! !
 
 
-!classDefinition: #Sale category: #'TusLibros-Iteracion2'!
-Object subclass: #Sale
-	instanceVariableNames: 'total productSold'
+!classDefinition: #MerchantProcessorMock category: #'TusLibros-Iteracion2'!
+Object subclass: #MerchantProcessorMock
+	instanceVariableNames: 'answer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Iteracion2'!
 
-!Sale methodsFor: 'user interface' stamp: 'LE 11/21/2018 23:43:41'!
-productsSold
+!MerchantProcessorMock methodsFor: 'initialization' stamp: 'Luis 11/22/2018 15:28:05'!
+initializeWith:anAnswerBlock
 
-	^ productSold ! !
-
-!Sale methodsFor: 'user interface' stamp: 'LE 11/21/2018 23:43:31'!
-total
-
-	^ total ! !
+	answer _ anAnswerBlock ! !
 
 
-!Sale methodsFor: 'initialization' stamp: 'LE 11/21/2018 23:42:10'!
-initializeWith:anAmountOfMoney  and:aProductList 
+!MerchantProcessorMock methodsFor: 'accessing' stamp: 'Luis 11/22/2018 15:31:02'!
+charge: anAmount to: aCreditCardOwner with: aCreditCardNumber withExpiration: anExpirationDate
 
-	total _ anAmountOfMoney .
-	productSold _ aProductList .! !
+	^answer value! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'Sale class' category: #'TusLibros-Iteracion2'!
-Sale class
+!classDefinition: 'MerchantProcessorMock class' category: #'TusLibros-Iteracion2'!
+MerchantProcessorMock class
 	instanceVariableNames: ''!
 
-!Sale class methodsFor: 'class initialization' stamp: 'LE 11/21/2018 23:41:23'!
-initializeWith:anAmountOfMoney and:aProductList
+!MerchantProcessorMock class methodsFor: 'initialization' stamp: 'Luis 11/22/2018 15:27:20'!
+with:anAnswerBlock
 
+	^ self new initializeWith: anAnswerBlock .
 
-	^ self new initializeWith:anAmountOfMoney  and:aProductList ! !
+	! !
