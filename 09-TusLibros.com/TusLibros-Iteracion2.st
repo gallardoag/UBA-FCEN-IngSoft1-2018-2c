@@ -80,7 +80,7 @@ TestCase subclass: #CashierTest
 	poolDictionaries: ''
 	category: 'TusLibros-Iteracion2'!
 
-!CashierTest methodsFor: 'Testing' stamp: 'A.G. 11/15/2018 20:05:32'!
+!CashierTest methodsFor: 'Testing' stamp: 'LE 11/21/2018 23:28:42'!
 test01_cannotCheckOutAnEmptyCart
 	
 	| card cart cashier |
@@ -92,6 +92,7 @@ test01_cannotCheckOutAnEmptyCart
 	self should: [cashier checkOut: cart with: card] 
 	raise: Error 
 	withExceptionDo: [:anError | anError messageText = Cashier emptyCartCheckOutMessage].
+	self assert: cashier salesBook isEmpty .
 	self assert: (cashier totalSold) equals: 0.! !
 
 !CashierTest methodsFor: 'Testing' stamp: 'A.G. 11/15/2018 20:06:29'!
@@ -141,6 +142,23 @@ test04_cannotCheckoutWithanExpiredCreditCard
 	
 	self should: [cashier checkOut: cart with: card] raise:Error  withExceptionDo: [:anError | anError messageText = Cashier expiredCardErrorMessage]! !
 
+!CashierTest methodsFor: 'Testing' stamp: 'LE 11/21/2018 23:37:35'!
+test05_salesAreRegisteredOnSalesBook
+		
+	| card cart cashier total priceList |
+	cart := Cart with: self defaultCatalog.
+	priceList := self defaultPriceList.
+	cashier := self createValidCashier.
+	card := self createValidCard.
+	
+	cart addItem: 'ISBN001' times: 2.
+	cart addItem: 'ISBN002' times: 1.
+	
+	total := (priceList at: 'ISBN001') * 2 + (priceList at: 'ISBN002').
+	cashier checkOut: cart with: card.
+
+	! !
+
 
 !CashierTest methodsFor: 'Testing-Support' stamp: 'A.G. 11/15/2018 20:58:47'!
 createExpiredCard
@@ -160,12 +178,12 @@ createValidCard
 	
 	^Card name: 'Cosme Fulanito' number: 0001 from: from thru: to ccv: 999.! !
 
-!CashierTest methodsFor: 'Testing-Support' stamp: 'A.G. 11/15/2018 19:17:56'!
+!CashierTest methodsFor: 'Testing-Support' stamp: 'LE 11/21/2018 23:17:38'!
 createValidCashier
 
 	| priceList |
 	priceList := self defaultPriceList.
-	^Cashier withPriceList: priceList.! !
+	^Cashier withPriceList: priceList registeringOn: OrderedCollection new.! !
 
 !CashierTest methodsFor: 'Testing-Support' stamp: 'A.G. 11/15/2018 18:46:58'!
 defaultCatalog
@@ -309,7 +327,7 @@ invalidQuantityErrorMessage
 
 !classDefinition: #Cashier category: #'TusLibros-Iteracion2'!
 Object subclass: #Cashier
-	instanceVariableNames: 'priceList totalSold'
+	instanceVariableNames: 'priceList totalSold salesBook'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Iteracion2'!
@@ -324,17 +342,24 @@ checkOut: aCart with: aCard
 	^sold.! !
 
 
-!Cashier methodsFor: 'initialization' stamp: 'A.G. 11/15/2018 20:23:21'!
-initializeWithPriceList:aPriceList
+!Cashier methodsFor: 'initialization' stamp: 'LE 11/21/2018 23:31:02'!
+initializeWithPriceList:aPriceList on:aSalesbook
 
 	priceList _ aPriceList .
-	totalSold _ 0.! !
+	totalSold _ 0.
+	salesBook _ aSalesbook ! !
 
 
 !Cashier methodsFor: 'evaluating' stamp: 'A.G. 11/15/2018 20:22:04'!
 totalSold
 
 	^totalSold! !
+
+
+!Cashier methodsFor: 'accessing' stamp: 'LE 11/21/2018 23:27:04'!
+salesBook
+
+	^ salesBook copy ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -353,7 +378,44 @@ expiredCardErrorMessage
 	^'Credit card is expired'.! !
 
 
-!Cashier class methodsFor: 'initialization' stamp: 'A.G. 11/15/2018 19:18:44'!
-withPriceList:aPriceList
+!Cashier class methodsFor: 'initialization' stamp: 'LE 11/21/2018 23:31:31'!
+withPriceList:aPriceList registeringOn: aSalesBook 
 
-	^self new initializeWithPriceList: aPriceList.! !
+	^self new initializeWithPriceList:aPriceList  on: aSalesBook ! !
+
+
+!classDefinition: #Sale category: #'TusLibros-Iteracion2'!
+Object subclass: #Sale
+	instanceVariableNames: 'total productSold'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Iteracion2'!
+
+!Sale methodsFor: 'user interface' stamp: 'LE 11/21/2018 23:43:41'!
+productsSold
+
+	^ productSold ! !
+
+!Sale methodsFor: 'user interface' stamp: 'LE 11/21/2018 23:43:31'!
+total
+
+	^ total ! !
+
+
+!Sale methodsFor: 'initialization' stamp: 'LE 11/21/2018 23:42:10'!
+initializeWith:anAmountOfMoney  and:aProductList 
+
+	total _ anAmountOfMoney .
+	productSold _ aProductList .! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Sale class' category: #'TusLibros-Iteracion2'!
+Sale class
+	instanceVariableNames: ''!
+
+!Sale class methodsFor: 'class initialization' stamp: 'LE 11/21/2018 23:41:23'!
+initializeWith:anAmountOfMoney and:aProductList
+
+
+	^ self new initializeWith:anAmountOfMoney  and:aProductList ! !
