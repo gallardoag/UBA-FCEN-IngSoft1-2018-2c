@@ -253,44 +253,78 @@ TestCase subclass: #InterfaceRestTest
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!InterfaceRestTest methodsFor: 'setUp' stamp: 'A.G. 11/22/2018 20:12:18'!
+!InterfaceRestTest methodsFor: 'setUp' stamp: 'LE 11/23/2018 23:20:56'!
 setUp
 
-	factory := StoreTestObjectsFactory new.! !
+	factory := StoreTestObjectsFactory new.
+! !
 
 
-!InterfaceRestTest methodsFor: 'Testing' stamp: 'A.G. 11/22/2018 20:50:48'!
+!InterfaceRestTest methodsFor: 'Testing' stamp: 'LE 11/23/2018 23:57:22'!
 test01_cannotCreateCartWithInvalidUser
 
 
 	| interface |
-	interface := RestInteface with: factory defaultUserDatabase .
+	interface := self createRestInterface .
 	
 	self should: [interface createCartFor:factory unregisteredClient with: factory registeredClientPassword ]
 	raise: Error  
-	withExceptionDo:[:anError | anError messageText  = RestInteface clientNotFound] ! !
+	withExceptionDo:[:anError | anError messageText  = RestInteface clientNotFound.
+		self assert: interface cartdatabase isEmpty 
+		] ! !
 
-!InterfaceRestTest methodsFor: 'Testing' stamp: 'A.G. 11/22/2018 20:50:19'!
+!InterfaceRestTest methodsFor: 'Testing' stamp: 'LE 11/24/2018 00:22:10'!
 test02_cannotCreateCartWithInvalidPassword
 
 	| interface |
-	interface := RestInteface with: factory defaultUserDatabase .
+	interface := self createRestInterface .
 	
 	self should: [interface createCartFor:factory registeredClient with: factory registeredClientInvalidPassword ]
 	raise: Error  
-	withExceptionDo:[:anError | anError messageText  = RestInteface wrongClientPassword] 
+	withExceptionDo:[:anError | anError messageText  = RestInteface wrongClientPassword.
+	self assert: interface cartdatabase isEmpty 
+		] 
 	
 	! !
 
-!InterfaceRestTest methodsFor: 'Testing' stamp: 'A.G. 11/22/2018 20:44:54'!
+!InterfaceRestTest methodsFor: 'Testing' stamp: 'LE 11/23/2018 23:42:00'!
 test03_newCartIsEmpty
 
 	| interface cartId |
-	interface := RestInteface with: factory defaultUserDatabase .
+	interface := self createRestInterface .
 	
 	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
 	
-	self assert: (interface listCart: cartId) isEmpty.! !
+	self assert: (interface listCart: cartId ) isEmpty .! !
+
+!InterfaceRestTest methodsFor: 'Testing' stamp: 'LE 11/24/2018 00:24:18'!
+test04_addingItemToCartAppearsOnCartList
+
+	| interface cartId |
+	interface := self createRestInterface .
+	
+	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
+	interface addToCart:cartId ISBN: factory itemSellByTheStore Quantity:1.
+	
+	self assert: 1 equals:(interface listCart: cartId ) size.
+	self assert: ((interface listCart:1) includes:(factory itemSellByTheStore)) .! !
+
+!InterfaceRestTest methodsFor: 'Testing' stamp: 'LE 11/24/2018 00:27:47'!
+test05_cannotAddAItemNotSold
+
+	| interface cartId |
+	interface := self createRestInterface .
+	
+	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
+
+	self should: [interface addToCart: cartId ISBN:factory itemNotSellByTheStore  Quantity:1 ] raise:Error  withExceptionDo: [
+		:anError ]. ! !
+
+
+!InterfaceRestTest methodsFor: 'test support' stamp: 'LE 11/23/2018 23:19:26'!
+createRestInterface
+
+	^ RestInteface with: factory defaultUserDatabase with: factory defaultCatalog .! !
 
 
 !classDefinition: #Cart category: #TusLibros!
@@ -505,7 +539,7 @@ expiringOn: aMonth
 
 !classDefinition: #RestInteface category: #TusLibros!
 Object subclass: #RestInteface
-	instanceVariableNames: 'clientDatabase cartDatabase lastCartId'
+	instanceVariableNames: 'clientDatabase cartDatabase lastCartId catalog'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
@@ -517,8 +551,16 @@ initializeWith: aClientDatabase
 	cartDatabase  _ Dictionary new.
 	lastCartId _ 0.! !
 
+!RestInteface methodsFor: 'initialization' stamp: 'LE 11/23/2018 23:15:05'!
+initializeWith: aClientDatabase with:aCatalog.
+	
+	clientDatabase _ aClientDatabase.
+	cartDatabase  _ Dictionary new.
+	catalog _ aCatalog .
+	lastCartId _ 0.! !
 
-!RestInteface methodsFor: 'rest-methods' stamp: 'A.G. 11/22/2018 20:59:03'!
+
+!RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/23/2018 23:51:16'!
 createCartFor: aClient with: aPassword 
 	
 	| pass cartId |
@@ -526,13 +568,37 @@ createCartFor: aClient with: aPassword
 	(aPassword = pass)ifFalse: [^self error: self class wrongClientPassword].
 	cartId := lastCartId +1.
 	lastCartId _ cartId.
-	cartDatabase at: cartId put: Cart new.
+	cartDatabase at: cartId put: self createValidCart .
 	^ cartId.! !
 
-!RestInteface methodsFor: 'rest-methods' stamp: 'A.G. 11/22/2018 21:01:56'!
+!RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/23/2018 23:45:10'!
 listCart: aCartId 
 	
-	^(cartDatabase at:aCartId) contents! !
+	^ (cartDatabase at:aCartId) contents.! !
+
+
+!RestInteface methodsFor: 'private methos' stamp: 'LE 11/23/2018 23:56:54'!
+cartdatabase
+
+	^ cartDatabase copy! !
+
+!RestInteface methodsFor: 'private methos' stamp: 'LE 11/23/2018 23:50:30'!
+createValidCart
+
+	^ Cart acceptingItemsOf: catalog .! !
+
+
+!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/24/2018 00:09:32'!
+addToCart: aCartID ISBN: anItem Quantity: aNumber 
+	
+	self assertValidCartID: aCartID.
+	(cartDatabase at:aCartID) add:aNumber of:anItem .! !
+
+!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/24/2018 00:06:53'!
+assertValidCartID:aCartID
+
+	(cartDatabase includesKey: aCartID) ifFalse: [^ self error: self class cartIDNotValid].
+	(cartDatabase at:aCartID )! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -540,18 +606,23 @@ listCart: aCartId
 RestInteface class
 	instanceVariableNames: ''!
 
-!RestInteface class methodsFor: 'initialization' stamp: 'A.G. 11/22/2018 20:37:14'!
-with: aClientDatabase
+!RestInteface class methodsFor: 'initialization' stamp: 'LE 11/23/2018 23:14:31'!
+with: aClientDatabase with:aCatalog
  
-	^self new initializeWith: aClientDatabase .! !
+	^self new initializeWith: aClientDatabase with:aCatalog .! !
 
 
-!RestInteface class methodsFor: 'error handling' stamp: 'A.G. 11/22/2018 20:38:41'!
+!RestInteface class methodsFor: 'error messages' stamp: 'LE 11/24/2018 00:05:06'!
+cartIDNotValid
+
+	^ ' We not have this ID in the Cart Database'! !
+
+!RestInteface class methodsFor: 'error messages' stamp: 'A.G. 11/22/2018 20:38:41'!
 clientNotFound
 	
 	^'Client not found in database'.! !
 
-!RestInteface class methodsFor: 'error handling' stamp: 'A.G. 11/22/2018 20:39:24'!
+!RestInteface class methodsFor: 'error messages' stamp: 'A.G. 11/22/2018 20:39:24'!
 wrongClientPassword
 	
 	^'Wrong password'.! !
