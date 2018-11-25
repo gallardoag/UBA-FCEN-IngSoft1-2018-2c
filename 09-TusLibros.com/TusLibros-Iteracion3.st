@@ -246,21 +246,21 @@ debit: anAmount from: aCreditCard
 	^debitBehavior value: anAmount value: aCreditCard ! !
 
 
-!classDefinition: #InterfaceRestTest category: #TusLibros!
-TestCase subclass: #InterfaceRestTest
+!classDefinition: #RestInterfaceTest category: #TusLibros!
+TestCase subclass: #RestInterfaceTest
 	instanceVariableNames: 'factory'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!InterfaceRestTest methodsFor: 'setUp' stamp: 'LE 11/23/2018 23:20:56'!
+!RestInterfaceTest methodsFor: 'setUp' stamp: 'LE 11/23/2018 23:20:56'!
 setUp
 
 	factory := StoreTestObjectsFactory new.
 ! !
 
 
-!InterfaceRestTest methodsFor: 'Testing' stamp: 'LE 11/23/2018 23:57:22'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/23/2018 23:57:22'!
 test01_cannotCreateCartWithInvalidUser
 
 
@@ -273,7 +273,7 @@ test01_cannotCreateCartWithInvalidUser
 		self assert: interface cartdatabase isEmpty 
 		] ! !
 
-!InterfaceRestTest methodsFor: 'Testing' stamp: 'LE 11/24/2018 00:22:10'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/24/2018 00:22:10'!
 test02_cannotCreateCartWithInvalidPassword
 
 	| interface |
@@ -287,7 +287,7 @@ test02_cannotCreateCartWithInvalidPassword
 	
 	! !
 
-!InterfaceRestTest methodsFor: 'Testing' stamp: 'LE 11/23/2018 23:42:00'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/23/2018 23:42:00'!
 test03_newCartIsEmpty
 
 	| interface cartId |
@@ -297,7 +297,7 @@ test03_newCartIsEmpty
 	
 	self assert: (interface listCart: cartId ) isEmpty .! !
 
-!InterfaceRestTest methodsFor: 'Testing' stamp: 'LE 11/24/2018 00:24:18'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/24/2018 00:24:18'!
 test04_addingItemToCartAppearsOnCartList
 
 	| interface cartId |
@@ -309,7 +309,7 @@ test04_addingItemToCartAppearsOnCartList
 	self assert: 1 equals:(interface listCart: cartId ) size.
 	self assert: ((interface listCart:1) includes:(factory itemSellByTheStore)) .! !
 
-!InterfaceRestTest methodsFor: 'Testing' stamp: 'LE 11/24/2018 00:27:47'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 11:17:53'!
 test05_cannotAddAItemNotSold
 
 	| interface cartId |
@@ -318,10 +318,53 @@ test05_cannotAddAItemNotSold
 	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
 
 	self should: [interface addToCart: cartId ISBN:factory itemNotSellByTheStore  Quantity:1 ] raise:Error  withExceptionDo: [
-		:anError ]. ! !
+		:anError | anError = Cart invalidItemErrorMessage.
+		self assert: (interface listCart: cartId ) isEmpty 
+		 ]. ! !
+
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 11:37:09'!
+test06_cannotAddItem0TimesToCart
+
+	| interface cartId |
+	interface := self createRestInterface .
+	
+	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
+	
+	self should: [interface addToCart:cartId ISBN: factory itemSellByTheStore Quantity:0.] 
+	raise:Error  
+	withExceptionDo: [:anError | anError messageText = Cart invalidQuantityErrorMessage .
+		self assert: (interface listCart: cartId) isEmpty. 
+		]
+! !
+
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 11:30:24'!
+test07_cannotAddItemToANotValidCart
+
+	| interface cartId |
+	interface := self createRestInterface .
+	
+	cartId := 2.
+
+	self should: [interface addToCart: cartId ISBN:factory itemNotSellByTheStore  Quantity:1 ] raise:Error  withExceptionDo: [
+		:anError | anError = RestInteface invalidCartIDErrorMessage .
+		self assert: interface cartdatabase isEmpty 
+		 ]. ! !
+
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 11:54:57'!
+test08_cannotAddItemAfter30Minutes
+
+	| interface cartId |
+	interface := self createRestInterface .
+	
+	cartId := 2.
+
+	self should: [interface addToCart: cartId ISBN:factory itemNotSellByTheStore  Quantity:1 ] raise:Error  withExceptionDo: [
+		:anError | anError = RestInteface invalidCartIDErrorMessage .
+		self assert: interface cartdatabase isEmpty 
+		 ]. ! !
 
 
-!InterfaceRestTest methodsFor: 'test support' stamp: 'LE 11/23/2018 23:19:26'!
+!RestInterfaceTest methodsFor: 'test support' stamp: 'LE 11/23/2018 23:19:26'!
 createRestInterface
 
 	^ RestInteface with: factory defaultUserDatabase with: factory defaultCatalog .! !
@@ -414,6 +457,17 @@ Cart class
 acceptingItemsOf: aCatalog
 
 	^self new initializeAcceptingItemsOf: aCatalog ! !
+
+
+!Cart class methodsFor: 'error messages' stamp: 'LE 11/25/2018 11:16:34'!
+invalidItemErrorMessage
+	
+	^'Item is not in catalog'! !
+
+!Cart class methodsFor: 'error messages' stamp: 'LE 11/25/2018 11:13:49'!
+invalidQuantityErrorMessage
+	
+	^'Invalid number of items'! !
 
 
 !classDefinition: #Cashier category: #TusLibros!
@@ -560,6 +614,12 @@ initializeWith: aClientDatabase with:aCatalog.
 	lastCartId _ 0.! !
 
 
+!RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/24/2018 00:09:32'!
+addToCart: aCartID ISBN: anItem Quantity: aNumber 
+	
+	self assertValidCartID: aCartID.
+	(cartDatabase at:aCartID) add:aNumber of:anItem .! !
+
 !RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/23/2018 23:51:16'!
 createCartFor: aClient with: aPassword 
 	
@@ -571,9 +631,10 @@ createCartFor: aClient with: aPassword
 	cartDatabase at: cartId put: self createValidCart .
 	^ cartId.! !
 
-!RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/23/2018 23:45:10'!
+!RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/25/2018 11:28:10'!
 listCart: aCartId 
 	
+	self assertValidCartID: aCartId .
 	^ (cartDatabase at:aCartId) contents.! !
 
 
@@ -588,17 +649,10 @@ createValidCart
 	^ Cart acceptingItemsOf: catalog .! !
 
 
-!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/24/2018 00:09:32'!
-addToCart: aCartID ISBN: anItem Quantity: aNumber 
-	
-	self assertValidCartID: aCartID.
-	(cartDatabase at:aCartID) add:aNumber of:anItem .! !
-
-!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/24/2018 00:06:53'!
+!RestInteface methodsFor: 'assertions' stamp: 'LE 11/25/2018 11:26:32'!
 assertValidCartID:aCartID
 
-	(cartDatabase includesKey: aCartID) ifFalse: [^ self error: self class cartIDNotValid].
-	(cartDatabase at:aCartID )! !
+	(cartDatabase includesKey: aCartID ) ifFalse: [^self error: self class invalidCartIDErrorMessage]! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -626,6 +680,12 @@ clientNotFound
 wrongClientPassword
 	
 	^'Wrong password'.! !
+
+
+!RestInteface class methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 11:26:56'!
+invalidCartIDErrorMessage
+
+	^' The Cart ID is invalid'.! !
 
 
 !classDefinition: #Sale category: #TusLibros!
