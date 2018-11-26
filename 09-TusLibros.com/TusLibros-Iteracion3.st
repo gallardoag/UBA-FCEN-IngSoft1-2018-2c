@@ -378,29 +378,45 @@ test09_canAddItemBeforeTimeOut
 		
 		 ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 22:32:33'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/26/2018 14:06:14'!
+test10_cannotCheckoutWithAEmptyCart
+
+	|cartId|
+	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
+	self should: [interface checkOutCart:cartId with: (factory notExpiredCreditCard)] 
+	raise:Error  withExceptionDo: [
+		:anError | anError = Cashier cartCanNotBeEmptyErrorMessage .
+		] 
+	
+
+! !
+
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/26/2018 14:17:08'!
 test10_cannotCheckoutWithAExpiredCard
 
 	|cartId|
 	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
-	interface addToCart: cartId ISBN:factory itemSellByTheStore  Quantity:1.
+	interface addToCart:cartId ISBN: factory itemSellByTheStore Quantity:1.
+
+	self should: [interface checkOutCart:cartId with: (factory expiredCreditCard ).self fail.] 
+	raise:Error  withExceptionDo: [
+		:anError | anError = Cashier canNotChargeAnExpiredCreditCardErrorMessage .
+		] 
+	
+
 
 
 ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 22:32:42'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/26/2018 12:40:29'!
 test11_cannotCheckoutWithAPoorManCard
 
-	|cartId|
-	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
-	interface addToCart: cartId ISBN:factory itemSellByTheStore  Quantity:1.! !
+! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 23:45:58'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/26/2018 12:40:33'!
 test12_canCheckoutWithAGoodCreditCard
 
-	|cartId|
-	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
-	interface addToCart: cartId ISBN:factory itemSellByTheStore  Quantity:1.! !
+! !
 
 
 !RestInterfaceTest methodsFor: 'test support' stamp: 'LE 11/25/2018 23:35:44'!
@@ -526,6 +542,13 @@ Object subclass: #CartDecorator
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
+!CartDecorator methodsFor: 'cart protocol' stamp: 'LE 11/26/2018 13:57:23'!
+contents
+	
+	^ cart contents ! !
+
+
+
 !CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:30:32'!
 ValidTime
 
@@ -547,10 +570,6 @@ assertIsStillValid
 
 	! !
 
-!CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:09:04'!
-contents
-	^ cart contents ! !
-
 !CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 18:23:10'!
 initializeWith:aSystem
 
@@ -559,6 +578,11 @@ initializeWith:aSystem
 	currentTime _ aSystem now.
 	lastUsed _ aSystem now.
 	! !
+
+!CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/26/2018 13:48:36'!
+isEmpty
+
+	^ cart contents isEmpty ! !
 
 !CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 21:59:39'!
 sessionDuration
@@ -764,6 +788,12 @@ addToCart: aCartID ISBN: anItem Quantity: aNumber
 	self assertValidCartID: aCartID.
 	(cartDatabase at:aCartID) add:anItem times:aNumber .! !
 
+!RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/26/2018 14:17:27'!
+checkOutCart: aCartID with: aCreditCard 
+	self assertCartIsNotEmpty:aCartID .
+	self assertValidCartID: aCartID .
+! !
+
 !RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/23/2018 23:51:16'!
 createCartFor: aClient with: aPassword 
 	
@@ -798,6 +828,16 @@ assertValidCartID:aCartID
 
 	(cartDatabase includesKey: aCartID ) ifFalse: [^self error: self class invalidCartIDErrorMessage]! !
 
+
+!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/26/2018 13:43:03'!
+MerchantProccesor
+
+	^  merchantProccessor copy! !
+
+!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/26/2018 14:05:49'!
+assertCartIsNotEmpty:aCartID
+
+	(cartDatabase at:aCartID contents ) ifTrue: [^self error: Cashier cartCanNotBeEmptyErrorMessage ]! !
 
 !RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:07:47'!
 catalog
