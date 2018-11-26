@@ -248,24 +248,25 @@ debit: anAmount from: aCreditCard
 
 !classDefinition: #RestInterfaceTest category: #TusLibros!
 TestCase subclass: #RestInterfaceTest
-	instanceVariableNames: 'factory'
+	instanceVariableNames: 'factory interface clock debitBehavior'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!RestInterfaceTest methodsFor: 'setUp' stamp: 'LE 11/23/2018 23:20:56'!
+!RestInterfaceTest methodsFor: 'setUp' stamp: 'LE 11/25/2018 22:14:21'!
 setUp
 
 	factory := StoreTestObjectsFactory new.
+	clock _ ClockMock new.
+	interface _ self createRestInterface .
+
 ! !
 
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/23/2018 23:57:22'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 19:13:24'!
 test01_cannotCreateCartWithInvalidUser
 
 
-	| interface |
-	interface := self createRestInterface .
 	
 	self should: [interface createCartFor:factory unregisteredClient with: factory registeredClientPassword ]
 	raise: Error  
@@ -273,11 +274,10 @@ test01_cannotCreateCartWithInvalidUser
 		self assert: interface cartdatabase isEmpty 
 		] ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/24/2018 00:22:10'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 19:13:33'!
 test02_cannotCreateCartWithInvalidPassword
 
-	| interface |
-	interface := self createRestInterface .
+
 	
 	self should: [interface createCartFor:factory registeredClient with: factory registeredClientInvalidPassword ]
 	raise: Error  
@@ -287,33 +287,30 @@ test02_cannotCreateCartWithInvalidPassword
 	
 	! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/23/2018 23:42:00'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 19:13:44'!
 test03_newCartIsEmpty
 
-	| interface cartId |
-	interface := self createRestInterface .
+	|cartId|
 	
 	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
 	
 	self assert: (interface listCart: cartId ) isEmpty .! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/24/2018 00:24:18'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 19:14:12'!
 test04_addingItemToCartAppearsOnCartList
 
-	| interface cartId |
-	interface := self createRestInterface .
-	
+	|cartId|
 	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
 	interface addToCart:cartId ISBN: factory itemSellByTheStore Quantity:1.
 	
 	self assert: 1 equals:(interface listCart: cartId ) size.
 	self assert: ((interface listCart:1) includes:(factory itemSellByTheStore)) .! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 11:17:53'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 19:14:19'!
 test05_cannotAddAItemNotSold
 
-	| interface cartId |
-	interface := self createRestInterface .
+	|  cartId |
+
 	
 	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
 
@@ -322,11 +319,11 @@ test05_cannotAddAItemNotSold
 		self assert: (interface listCart: cartId ) isEmpty 
 		 ]. ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 11:37:09'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 19:14:25'!
 test06_cannotAddItem0TimesToCart
 
-	| interface cartId |
-	interface := self createRestInterface .
+	|  cartId |
+
 	
 	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
 	
@@ -337,37 +334,89 @@ test06_cannotAddItem0TimesToCart
 		]
 ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 11:30:24'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 23:47:33'!
 test07_cannotAddItemToANotValidCart
 
-	| interface cartId |
-	interface := self createRestInterface .
+	|  cartId |
+
 	
-	cartId := 2.
+	cartId := 0.
 
 	self should: [interface addToCart: cartId ISBN:factory itemNotSellByTheStore  Quantity:1 ] raise:Error  withExceptionDo: [
 		:anError | anError = RestInteface invalidCartIDErrorMessage .
 		self assert: interface cartdatabase isEmpty 
 		 ]. ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 11:54:57'!
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 23:44:54'!
 test08_cannotAddItemAfter30Minutes
 
-	| interface cartId |
-	interface := self createRestInterface .
-	
-	cartId := 2.
 
-	self should: [interface addToCart: cartId ISBN:factory itemNotSellByTheStore  Quantity:1 ] raise:Error  withExceptionDo: [
-		:anError | anError = RestInteface invalidCartIDErrorMessage .
-		self assert: interface cartdatabase isEmpty 
+	|cartId|
+	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
+	self advanceTime: (30 * minute).
+
+
+	self should: [interface addToCart: cartId ISBN:factory itemSellByTheStore  Quantity:1 ] raise:Error  withExceptionDo: [
+		:anError | anError = CartDecorator expiredSessionErrorMessage .
+		
+
+		
 		 ]. ! !
 
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 23:45:28'!
+test09_canAddItemBeforeTimeOut
 
-!RestInterfaceTest methodsFor: 'test support' stamp: 'LE 11/23/2018 23:19:26'!
+
+	|cartId|
+	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
+	self advanceTime: (25 * minute).
+	interface addToCart: cartId ISBN:factory itemSellByTheStore  Quantity:1 .
+	self deny: (interface listCart: cartId) isEmpty 
+	
+		
+
+		
+		 ! !
+
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 22:32:33'!
+test10_cannotCheckoutWithAExpiredCard
+
+	|cartId|
+	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
+	interface addToCart: cartId ISBN:factory itemSellByTheStore  Quantity:1.
+
+
+! !
+
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 22:32:42'!
+test11_cannotCheckoutWithAPoorManCard
+
+	|cartId|
+	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
+	interface addToCart: cartId ISBN:factory itemSellByTheStore  Quantity:1.! !
+
+!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 23:45:58'!
+test12_canCheckoutWithAGoodCreditCard
+
+	|cartId|
+	cartId := interface createCartFor:factory registeredClient with: factory registeredClientPassword.
+	interface addToCart: cartId ISBN:factory itemSellByTheStore  Quantity:1.! !
+
+
+!RestInterfaceTest methodsFor: 'test support' stamp: 'LE 11/25/2018 23:35:44'!
 createRestInterface
 
-	^ RestInteface with: factory defaultUserDatabase with: factory defaultCatalog .! !
+	^ RestInteface withDatabase: factory defaultUserDatabase WithCatalog: factory defaultCatalog RunningOn: clock savingSalesOn: OrderedCollection new WithMP: self.! !
+
+!RestInterfaceTest methodsFor: 'test support' stamp: 'LE 11/25/2018 23:43:30'!
+debit: anAmount from: aCreditCard 
+
+	^debitBehavior value: anAmount value: aCreditCard ! !
+
+
+!RestInterfaceTest methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 20:37:04'!
+advanceTime: aTimeSpan 
+	clock advanceTime: aTimeSpan ! !
 
 
 !classDefinition: #Cart category: #TusLibros!
@@ -470,6 +519,75 @@ invalidQuantityErrorMessage
 	^'Invalid number of items'! !
 
 
+!classDefinition: #CartDecorator category: #TusLibros!
+Object subclass: #CartDecorator
+	instanceVariableNames: 'cart currentTime lastUsed system'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:30:32'!
+ValidTime
+
+	^ 30 * minute ! !
+
+!CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 22:14:57'!
+add:anItem times:aNumber
+	
+	self updateTime .
+	self assertIsStillValid .
+	cart add:aNumber of:anItem ! !
+
+!CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 22:15:51'!
+assertIsStillValid
+
+	|timeSinceLastUsed|
+	timeSinceLastUsed _ lastUsed distanceTo: currentTime .
+	(timeSinceLastUsed >= self sessionDuration ) ifTrue: [^ self error: self class expiredSessionErrorMessage ].
+
+	! !
+
+!CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:09:04'!
+contents
+	^ cart contents ! !
+
+!CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 18:23:10'!
+initializeWith:aSystem
+
+	system _ aSystem .
+	cart _ Cart acceptingItemsOf: aSystem catalog.
+	currentTime _ aSystem now.
+	lastUsed _ aSystem now.
+	! !
+
+!CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 21:59:39'!
+sessionDuration
+
+	^ 30 * minute ! !
+
+!CartDecorator methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 22:10:31'!
+updateTime
+
+	^currentTime _ system now.
+	! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CartDecorator class' category: #TusLibros!
+CartDecorator class
+	instanceVariableNames: ''!
+
+!CartDecorator class methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:32:32'!
+expiredSessionErrorMessage
+
+	^ ' The session is expired'! !
+
+!CartDecorator class methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:04:00'!
+in:aSystem
+
+	^ self new initializeWith: aSystem .! !
+
+
 !classDefinition: #Cashier category: #TusLibros!
 Object subclass: #Cashier
 	instanceVariableNames: 'cart salesBook merchantProcessor creditCard total'
@@ -561,6 +679,34 @@ creditCardHasNoCreditErrorMessage
 	^'Credit card has no credit'! !
 
 
+!classDefinition: #ClockMock category: #TusLibros!
+Object subclass: #ClockMock
+	instanceVariableNames: 'now'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!ClockMock methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 20:34:21'!
+advanceTime:aTimeSpan
+
+	now _ now next:aTimeSpan .! !
+
+!ClockMock methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:26:33'!
+initialize
+
+	now _ GregorianDateTime now.! !
+
+!ClockMock methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:08:40'!
+now
+	
+	^now! !
+
+!ClockMock methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 20:34:44'!
+rewindTime:aTimeSpan
+
+	now _ now next: aTimeSpan negated ! !
+
+
 !classDefinition: #CreditCard category: #TusLibros!
 Object subclass: #CreditCard
 	instanceVariableNames: 'expiration'
@@ -593,32 +739,30 @@ expiringOn: aMonth
 
 !classDefinition: #RestInteface category: #TusLibros!
 Object subclass: #RestInteface
-	instanceVariableNames: 'clientDatabase cartDatabase lastCartId catalog'
+	instanceVariableNames: 'clientDatabase cartDatabase lastCartId catalog clock salesBook merchantProccessor'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!RestInteface methodsFor: 'initialization' stamp: 'A.G. 11/22/2018 20:55:47'!
-initializeWith: aClientDatabase 
-	
-	clientDatabase _ aClientDatabase.
-	cartDatabase  _ Dictionary new.
-	lastCartId _ 0.! !
-
-!RestInteface methodsFor: 'initialization' stamp: 'LE 11/23/2018 23:15:05'!
-initializeWith: aClientDatabase with:aCatalog.
+!RestInteface methodsFor: 'initialization' stamp: 'LE 11/25/2018 23:39:16'!
+initializeWith: aClientDatabase withItems:aCatalog RunningOn: aClock SavingSalesOn: aSalesBook MakingTransactionsWith: aMP  .
 	
 	clientDatabase _ aClientDatabase.
 	cartDatabase  _ Dictionary new.
 	catalog _ aCatalog .
-	lastCartId _ 0.! !
+	lastCartId _ 0.
+	clock _ aClock .
+	salesBook _ aSalesBook .
+	merchantProccessor _ aMP .
+	! !
 
 
-!RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/24/2018 00:09:32'!
+!RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/25/2018 22:09:50'!
 addToCart: aCartID ISBN: anItem Quantity: aNumber 
 	
+
 	self assertValidCartID: aCartID.
-	(cartDatabase at:aCartID) add:aNumber of:anItem .! !
+	(cartDatabase at:aCartID) add:anItem times:aNumber .! !
 
 !RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/23/2018 23:51:16'!
 createCartFor: aClient with: aPassword 
@@ -643,10 +787,10 @@ cartdatabase
 
 	^ cartDatabase copy! !
 
-!RestInteface methodsFor: 'private methos' stamp: 'LE 11/23/2018 23:50:30'!
+!RestInteface methodsFor: 'private methos' stamp: 'LE 11/25/2018 19:04:48'!
 createValidCart
 
-	^ Cart acceptingItemsOf: catalog .! !
+	^ CartDecorator in:self.! !
 
 
 !RestInteface methodsFor: 'assertions' stamp: 'LE 11/25/2018 11:26:32'!
@@ -654,16 +798,25 @@ assertValidCartID:aCartID
 
 	(cartDatabase includesKey: aCartID ) ifFalse: [^self error: self class invalidCartIDErrorMessage]! !
 
+
+!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:07:47'!
+catalog
+	^catalog copy! !
+
+!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:08:13'!
+now
+ ^ clock now.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'RestInteface class' category: #TusLibros!
 RestInteface class
 	instanceVariableNames: ''!
 
-!RestInteface class methodsFor: 'initialization' stamp: 'LE 11/23/2018 23:14:31'!
-with: aClientDatabase with:aCatalog
+!RestInteface class methodsFor: 'initialization' stamp: 'LE 11/25/2018 23:37:44'!
+withDatabase: aClientDatabase WithCatalog:aCatalog RunningOn: aClock savingSalesOn: aSalesBook WithMP: aMerchantProcessor  
  
-	^self new initializeWith: aClientDatabase with:aCatalog .! !
+	^self new initializeWith: aClientDatabase withItems:aCatalog RunningOn:aClock SavingSalesOn: OrderedCollection new MakingTransactionsWith: aMerchantProcessor ! !
 
 
 !RestInteface class methodsFor: 'error messages' stamp: 'LE 11/24/2018 00:05:06'!
