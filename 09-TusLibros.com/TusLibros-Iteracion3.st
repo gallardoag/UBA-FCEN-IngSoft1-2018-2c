@@ -10,7 +10,7 @@ test01NewCartsAreCreatedEmpty
 
 	self assert: testObjectsFactory createCart isEmpty! !
 
-!CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:10'!
+!CartTest methodsFor: 'tests' stamp: 'LE 12/2/2018 15:01:47'!
 test02CanNotAddItemsThatDoNotBelongToStore
 
 	| cart |
@@ -21,7 +21,7 @@ test02CanNotAddItemsThatDoNotBelongToStore
 		should: [ cart add: testObjectsFactory itemNotSellByTheStore ]
 		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			self assert: anError messageText = cart invalidItemErrorMessage.
+			self assert: anError messageText = Cart invalidItemErrorMessage.
 			self assert: cart isEmpty ]! !
 
 !CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:10'!
@@ -34,7 +34,7 @@ test03AfterAddingAnItemTheCartIsNotEmptyAnymore
 	cart add: testObjectsFactory itemSellByTheStore.
 	self deny: cart isEmpty ! !
 
-!CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:10'!
+!CartTest methodsFor: 'tests' stamp: 'LE 12/2/2018 15:39:48'!
 test04CanNotAddNonPositiveNumberOfItems
 
 	| cart |
@@ -45,10 +45,10 @@ test04CanNotAddNonPositiveNumberOfItems
 		should: [cart add: 0 of: testObjectsFactory itemSellByTheStore ]
 		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			self assert: anError messageText = cart invalidQuantityErrorMessage.
+			self assert: anError messageText = Cart invalidQuantityErrorMessage.
 			self assert: cart isEmpty ]! !
 
-!CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:10'!
+!CartTest methodsFor: 'tests' stamp: 'LE 12/2/2018 15:01:54'!
 test05CanNotAddMoreThanOneItemNotSellByTheStore
 
 	| cart |
@@ -59,7 +59,7 @@ test05CanNotAddMoreThanOneItemNotSellByTheStore
 		should: [cart add: 2 of: testObjectsFactory itemNotSellByTheStore  ]
 		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			self assert: anError messageText = cart invalidItemErrorMessage.
+			self assert: anError messageText = Cart invalidItemErrorMessage.
 			self assert: cart isEmpty ]! !
 
 !CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:11'!
@@ -263,7 +263,7 @@ setUp
 ! !
 
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 12/2/2018 13:23:49'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 12/2/2018 13:23:49'!
 test01_cannotCreateCartWithInvalidUser
 
 
@@ -273,7 +273,7 @@ test01_cannotCreateCartWithInvalidUser
 	withExceptionDo:[:anError | anError messageText  = RestInteface clientNotFound.
 		] ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 12/2/2018 13:23:55'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 12/2/2018 13:23:55'!
 test02_cannotCreateCartWithInvalidPassword
 
 
@@ -285,7 +285,7 @@ test02_cannotCreateCartWithInvalidPassword
 	
 	! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 19:13:44'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 11/25/2018 19:13:44'!
 test03_newCartIsEmpty
 
 	|cartId|
@@ -294,7 +294,7 @@ test03_newCartIsEmpty
 	
 	self assert: (interface listCart: cartId ) isEmpty .! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 19:14:12'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 11/25/2018 19:14:12'!
 test04_addingItemToCartAppearsOnCartList
 
 	|cartId|
@@ -304,7 +304,7 @@ test04_addingItemToCartAppearsOnCartList
 	self assert: 1 equals:(interface listCart: cartId ) size.
 	self assert: ((interface listCart:1) includes:(factory itemSellByTheStore)) .! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 19:14:19'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 11/25/2018 19:14:19'!
 test05_cannotAddAItemNotSold
 
 	|  cartId |
@@ -317,7 +317,7 @@ test05_cannotAddAItemNotSold
 		self assert: (interface listCart: cartId ) isEmpty 
 		 ]. ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 19:14:25'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 11/25/2018 19:14:25'!
 test06_cannotAddItem0TimesToCart
 
 	|  cartId |
@@ -332,7 +332,7 @@ test06_cannotAddItem0TimesToCart
 		]
 ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 12/2/2018 13:24:00'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 12/2/2018 13:24:00'!
 test07_cannotAddItemToANotValidCart
 
 	|  cartId |
@@ -344,7 +344,7 @@ test07_cannotAddItemToANotValidCart
 		:anError | anError = RestInteface invalidCartIDErrorMessage .
 		 ]. ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/26/2018 21:00:14'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 11/26/2018 21:00:14'!
 test08bis_cannotCheckOutAfter30Minutes
 
 
@@ -361,7 +361,7 @@ test08bis_cannotCheckOutAfter30Minutes
 		
 		 ]. ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/26/2018 21:00:14'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 12/2/2018 15:35:45'!
 test08_cannotAddItemAfter30Minutes
 
 
@@ -371,11 +371,12 @@ test08_cannotAddItemAfter30Minutes
 
 	self should: [interface addToCart: cartId ISBN:factory itemSellByTheStore  Quantity:1 ] raise:Error  withExceptionDo: [
 		:anError | anError = CartSession expiredSessionErrorMessage .
+		self rewindTime: (30 * minute ).
 		self assert: (interface listCart: cartId ) isEmpty 
 		
 		 ]. ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/25/2018 23:45:28'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 11/25/2018 23:45:28'!
 test09_canAddItemBeforeTimeOut
 
 
@@ -390,7 +391,7 @@ test09_canAddItemBeforeTimeOut
 		
 		 ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/26/2018 18:03:00'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 11/26/2018 18:03:00'!
 test10_cannotCheckoutWithAEmptyCart
 
 	|cartId|
@@ -403,7 +404,7 @@ test10_cannotCheckoutWithAEmptyCart
 
 ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 12/2/2018 12:01:25'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 12/2/2018 12:01:25'!
 test10_cannotCheckoutWithAExpiredCard
 
 	|cartId|
@@ -421,12 +422,12 @@ test10_cannotCheckoutWithAExpiredCard
 
 ! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 11/26/2018 18:44:56'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 11/26/2018 18:44:56'!
 test11_purchaseListIsEmptyWhenNoPurchasesHaveBeenDone
 
 	self assert: (interface listPurchasesOf: factory registeredClient with: factory registeredClientPassword ) equals: (OrderedCollection new).! !
 
-!RestInterfaceTest methodsFor: 'Testing' stamp: 'LE 12/2/2018 12:06:20'!
+!RestInterfaceTest methodsFor: 'tests' stamp: 'LE 12/2/2018 12:06:20'!
 test12_aCorrectlyDonePurchaseIsListed
 
 	|cartId debitedAmout debitedCreditCard |
@@ -451,6 +452,10 @@ debit: anAmount from: aCreditCard
 
 	^debitBehavior value: anAmount value: aCreditCard ! !
 
+!RestInterfaceTest methodsFor: 'test support' stamp: 'LE 12/2/2018 15:32:34'!
+rewindTime: aTimeSpan 
+	clock rewindTime:aTimeSpan ! !
+
 
 !classDefinition: #Cart category: #TusLibros!
 Object subclass: #Cart
@@ -459,26 +464,15 @@ Object subclass: #Cart
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Cart methodsFor: 'error messages' stamp: 'HernanWilkinson 6/17/2013 17:45'!
-invalidItemErrorMessage
-	
-	^'Item is not in catalog'! !
-
-!Cart methodsFor: 'error messages' stamp: 'HernanWilkinson 6/17/2013 17:45'!
-invalidQuantityErrorMessage
-	
-	^'Invalid number of items'! !
-
-
-!Cart methodsFor: 'assertions' stamp: 'HernanWilkinson 6/17/2013 18:06'!
+!Cart methodsFor: 'assertions' stamp: 'LE 12/2/2018 15:01:37'!
 assertIsValidItem: anItem
 
-	(catalog includesKey: anItem) ifFalse: [ self error: self invalidItemErrorMessage ]! !
+	(catalog includesKey: anItem) ifFalse: [ self error: self class invalidItemErrorMessage ]! !
 
-!Cart methodsFor: 'assertions' stamp: 'HernanWilkinson 6/17/2013 17:51'!
+!Cart methodsFor: 'assertions' stamp: 'LE 12/2/2018 15:39:33'!
 assertIsValidQuantity: aQuantity
 
-	aQuantity strictlyPositive ifFalse: [ self error: self invalidQuantityErrorMessage ]! !
+	aQuantity strictlyPositive ifFalse: [ self error: self class invalidQuantityErrorMessage ]! !
 
 
 !Cart methodsFor: 'initialization' stamp: 'HernanWilkinson 6/17/2013 17:48'!
@@ -559,52 +553,28 @@ Object subclass: #CartSession
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!CartSession methodsFor: 'cart protocol' stamp: 'LE 11/26/2018 13:57:23'!
-contents
-	
-	^ cart contents ! !
-
-
-!CartSession methodsFor: 'as yet unclassified' stamp: 'LE 12/2/2018 11:58:34'!
+!CartSession methodsFor: 'cart protocol' stamp: 'LE 12/2/2018 11:58:34'!
 add:anItem times:aNumber
 	
 	self assertIsStillValid .
 	cart add:aNumber of:anItem.
 	self updateTime.! !
 
-!CartSession methodsFor: 'as yet unclassified' stamp: 'LE 12/2/2018 11:57:24'!
-assertIsStillValid
+!CartSession methodsFor: 'cart protocol' stamp: 'LE 12/2/2018 15:34:42'!
+contents
+	self assertIsStillValid.
+	^ cart contents ! !
 
-	|timeSinceLastUsed|
-	timeSinceLastUsed _ lastUsed distanceTo: system now. .
-	(timeSinceLastUsed >= self sessionDuration ) ifTrue: [^ self error: self class expiredSessionErrorMessage ].
-
-	! !
-
-!CartSession methodsFor: 'as yet unclassified' stamp: 'LE 11/26/2018 13:48:36'!
+!CartSession methodsFor: 'cart protocol' stamp: 'LE 12/2/2018 15:34:20'!
 isEmpty
 
-	^ cart contents isEmpty ! !
+	self assertIsStillValid.
+	^ cart  isEmpty ! !
 
-!CartSession methodsFor: 'as yet unclassified' stamp: 'LE 12/2/2018 13:26:31'!
-owner
-
-	^ owner copy! !
-
-!CartSession methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 21:59:39'!
-sessionDuration
-
-	^ 30 * minute ! !
-
-!CartSession methodsFor: 'as yet unclassified' stamp: 'LE 11/26/2018 18:48:07'!
+!CartSession methodsFor: 'cart protocol' stamp: 'LE 12/2/2018 15:34:48'!
 total
-
+	self assertIsStillValid.
 	^ cart total.! !
-
-!CartSession methodsFor: 'as yet unclassified' stamp: 'LE 12/2/2018 11:58:52'!
-updateTime
-
-	lastUsed _ system now.! !
 
 
 !CartSession methodsFor: 'initialization' stamp: 'LE 12/2/2018 13:30:50'!
@@ -616,13 +586,31 @@ initializeFor:aClient in:aSystem
 	lastUsed _ aSystem now.
 	! !
 
-!CartSession methodsFor: 'initialization' stamp: 'LE 12/2/2018 11:59:14'!
-initializeWith:aSystem
 
-	system _ aSystem .
-	cart _ Cart acceptingItemsOf: aSystem catalog..
-	lastUsed _ aSystem now.
+!CartSession methodsFor: 'asertions' stamp: 'LE 12/2/2018 11:57:24'!
+assertIsStillValid
+
+	|timeSinceLastUsed|
+	timeSinceLastUsed _ lastUsed distanceTo: system now. .
+	(timeSinceLastUsed >= self sessionDuration ) ifTrue: [^ self error: self class expiredSessionErrorMessage ].
+
 	! !
+
+
+!CartSession methodsFor: 'support' stamp: 'LE 12/2/2018 13:26:31'!
+owner
+
+	^ owner copy! !
+
+!CartSession methodsFor: 'support' stamp: 'LE 11/25/2018 21:59:39'!
+sessionDuration
+
+	^ 30 * minute ! !
+
+!CartSession methodsFor: 'support' stamp: 'LE 12/2/2018 11:58:52'!
+updateTime
+
+	lastUsed _ system now.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -643,7 +631,7 @@ for: aClient in:aSystem
 
 !classDefinition: #Cashier category: #TusLibros!
 Object subclass: #Cashier
-	instanceVariableNames: 'cart salesBook merchantProcessor creditCard total'
+	instanceVariableNames: 'cart salesBook merchantProcessor creditCard total owner'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
@@ -654,10 +642,10 @@ calculateTotal
 	total := cart total.
 	! !
 
-!Cashier methodsFor: 'checkout - private' stamp: 'LE 12/2/2018 13:34:44'!
+!Cashier methodsFor: 'checkout - private' stamp: 'LE 12/2/2018 15:05:48'!
 createSale
 
-	^ TicketSale of: total for: cart owner withItems: cart contents 
+	^ TicketSale of: total for: owner withItems: cart contents 
 ! !
 
 !Cashier methodsFor: 'checkout - private' stamp: 'HernanWilkinson 6/17/2013 19:06'!
@@ -682,13 +670,14 @@ checkOut
 	^ total! !
 
 
-!Cashier methodsFor: 'initialization' stamp: 'HernanWilkinson 6/17/2013 18:53'!
-initializeToCheckout: aCart charging: aCreditCard throught: aMerchantProcessor registeringOn: aSalesBook
+!Cashier methodsFor: 'initialization' stamp: 'LE 12/2/2018 15:05:15'!
+initializeToCheckout: aCart of: aClient charging: aCreditCard throught: aMerchantProcessor registeringOn: aSalesBook
 	
 	cart := aCart.
 	creditCard := aCreditCard.
 	merchantProcessor := aMerchantProcessor.
-	salesBook := aSalesBook! !
+	salesBook := aSalesBook.
+	owner _ aClient ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -707,14 +696,14 @@ assertIsNotExpired: aCreditCard on: aDate
 	(aCreditCard isExpiredOn: aDate) ifTrue: [ self error: self canNotChargeAnExpiredCreditCardErrorMessage ]! !
 
 
-!Cashier class methodsFor: 'instance creation' stamp: 'LE 12/2/2018 13:13:04'!
+!Cashier class methodsFor: 'instance creation' stamp: 'LE 12/2/2018 15:05:32'!
 toCheckout: aCart of: aClient charging: aCreditCard throught: aMerchantProcessor on: aDate registeringOn: aSalesBook
 	
 	
 	self assertIsNotEmpty: aCart.
 	self assertIsNotExpired: aCreditCard on: aDate.
 	
-	^self new initializeToCheckout: aCart charging: aCreditCard throught: aMerchantProcessor registeringOn: aSalesBook! !
+	^self new initializeToCheckout: aCart of: aClient charging: aCreditCard throught: aMerchantProcessor registeringOn: aSalesBook! !
 
 
 !Cashier class methodsFor: 'error messages' stamp: 'HernanWilkinson 6/17/2013 18:21'!
@@ -731,14 +720,6 @@ cartCanNotBeEmptyErrorMessage
 creditCardHasNoCreditErrorMessage
 	
 	^'Credit card has no credit'! !
-
-
-!classDefinition: #CashierWrapper category: #TusLibros!
-Object subclass: #CashierWrapper
-	instanceVariableNames: 'cashier owner'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'TusLibros'!
 
 
 !classDefinition: #Clock category: #TusLibros!
@@ -859,26 +840,25 @@ addToCart: aCartID ISBN: anItem Quantity: aNumber
 	self assertValidCartID: aCartID.
 	(cartDatabase at:aCartID) add:anItem times:aNumber .! !
 
-!RestInteface methodsFor: 'rest-methods' stamp: 'LE 12/2/2018 13:32:34'!
+!RestInteface methodsFor: 'rest-methods' stamp: 'LE 12/2/2018 15:07:13'!
 checkOutCart: aCartID with: aCreditCard 
-	|cashier cart|
+	|cashier cartSession|
 
 	self assertCartIsNotEmpty:aCartID .
 	self assertValidCartID: aCartID .
 	self assertCardIsStillValid:aCartID.
 
-	cart _ cartDatabase at:aCartID .
+	cartSession _ cartDatabase at:aCartID .
 	
-	cashier _ Cashier toCheckout:cart of: cart owner charging:aCreditCard  throught:merchantProccessor  on: (self today)  registeringOn:salesBook.
+	cashier _ Cashier toCheckout:cartSession of: cartSession owner charging:aCreditCard  throught:merchantProccessor  on: (self today)  registeringOn:salesBook.
 	cashier checkOut 
 ! !
 
-!RestInteface methodsFor: 'rest-methods' stamp: 'LE 12/2/2018 13:28:46'!
+!RestInteface methodsFor: 'rest-methods' stamp: 'LE 12/2/2018 15:27:30'!
 createCartFor: aClient with: aPassword 
 	
-	| pass cartId |
-	pass := clientDatabase at: aClient ifAbsent: [^self error: self class unregisteredClient ].
-	(aPassword = pass)ifFalse: [^self error: self class wrongClientPassword].
+	|cartId|
+	self assertThisUser: aClient canLogInWithThisPassword:aPassword .
 	cartId := lastCartId +1.
 	lastCartId _ cartId.
 	cartDatabase at: cartId put: (self createValidCartFor:aClient) .
@@ -890,15 +870,19 @@ listCart: aCartId
 	self assertValidCartID: aCartId .
 	^ (cartDatabase at:aCartId) contents.! !
 
-!RestInteface methodsFor: 'rest-methods' stamp: 'LE 11/26/2018 18:46:00'!
+!RestInteface methodsFor: 'rest-methods' stamp: 'LE 12/2/2018 15:27:30'!
 listPurchasesOf: aClientID with: aClientPassword 
-	^ OrderedCollection new.! !
+
+	|clientTickets|
+
+	self assertThisUser: aClientID canLogInWithThisPassword: aClientPassword .
+	clientTickets _ salesBook select:[:aSale | aSale buyer = aClientID ].
+	^clientTickets inject: OrderedCollection new into:[:result :current | result addAll: current items . result ] ! !
 
 
-!RestInteface methodsFor: 'private methos' stamp: 'LE 12/2/2018 13:27:29'!
-createValidCart
-
-	^ CartSession for: nil in:self.! !
+!RestInteface methodsFor: 'private methos' stamp: 'LE 11/25/2018 19:07:47'!
+catalog
+	^catalog copy! !
 
 !RestInteface methodsFor: 'private methos' stamp: 'LE 12/2/2018 13:29:04'!
 createValidCartFor:aClient
@@ -917,8 +901,12 @@ assertCartIsNotEmpty:aCartID
 
 	(cartDatabase at:aCartID) contents isEmpty  ifTrue: [^self error: Cashier cartCanNotBeEmptyErrorMessage ]! !
 
-!RestInteface methodsFor: 'assertions' stamp: 'LE 12/2/2018 13:53:20'!
-assertThisUser:anUser loginWithPassword:aPassword! !
+!RestInteface methodsFor: 'assertions' stamp: 'LE 12/2/2018 15:27:30'!
+assertThisUser:aClient canLogInWithThisPassword:aPassword
+
+	|pass|
+	pass := clientDatabase at: aClient ifAbsent: [^self error: self class unregisteredClient ].
+	(aPassword = pass)ifFalse: [^self error: self class wrongClientPassword].! !
 
 !RestInteface methodsFor: 'assertions' stamp: 'LE 11/25/2018 11:26:32'!
 assertValidCartID:aCartID
@@ -926,20 +914,11 @@ assertValidCartID:aCartID
 	(cartDatabase includesKey: aCartID ) ifFalse: [^self error: self class invalidCartIDErrorMessage]! !
 
 
-!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/26/2018 13:43:03'!
-MerchantProccesor
-
-	^  merchantProccessor copy! !
-
-!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:07:47'!
-catalog
-	^catalog copy! !
-
-!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/25/2018 19:08:13'!
+!RestInteface methodsFor: 'time' stamp: 'LE 11/25/2018 19:08:13'!
 now
  ^ clock now.! !
 
-!RestInteface methodsFor: 'as yet unclassified' stamp: 'LE 11/26/2018 17:49:24'!
+!RestInteface methodsFor: 'time' stamp: 'LE 11/26/2018 17:49:24'!
 today
 	^ clock today.! !
 
@@ -1064,23 +1043,32 @@ today
 
 !classDefinition: #TicketSale category: #TusLibros!
 Object subclass: #TicketSale
-	instanceVariableNames: 'total clientID items'
+	instanceVariableNames: 'total buyer items'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!TicketSale methodsFor: 'total' stamp: 'HernanWilkinson 6/17/2013 18:48'!
+!TicketSale methodsFor: 'getters' stamp: 'LE 12/2/2018 15:11:35'!
+buyer
+
+	^ buyer copy! !
+
+!TicketSale methodsFor: 'getters' stamp: 'LE 12/2/2018 15:11:41'!
+items
+
+	^ items copy .! !
+
+!TicketSale methodsFor: 'getters' stamp: 'LE 12/2/2018 15:11:28'!
 total
 	
-	^ total! !
+	^ total copy! !
 
 
-
-!TicketSale methodsFor: 'initialization' stamp: 'LE 11/26/2018 20:32:27'!
+!TicketSale methodsFor: 'initialization' stamp: 'LE 12/2/2018 15:11:15'!
 initializeOf:aTotal for:aClient withItems:anItemList 
 
 	total _ aTotal .
-	clientID _ aClient.
+	buyer _ aClient.
 	items _ anItemList .! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
